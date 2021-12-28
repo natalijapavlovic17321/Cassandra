@@ -1,0 +1,46 @@
+CASSANDRA TUTORIJAL
+
+NAPOMENA: 
+Ja sam sve ovo radila na posebnom (SVEŽEM) sistemu. Na glavnom sam prvo pokušala, a na njemu mi se nalaze ostale stvari za faks (py v3.10 za VI, jdk v17 za PP). Ne pričam ovo bez razloga; za VI su insistirali na v3, a ne mogu da garantujem da verzija jave koju ću da navedem neće da vam poremeti Eclipse koji koristite za PP (ovo se meni desilo). Vi možete da eksperimentišete sa verzijama ako želite, ali nije toliko jednostavno kod Cassandre. Aktuelna verzija nje je 4.10, ali od v4 ne postoji podrška za Windows (nema .bat ni .ps1 fajl => ne može da prepozna ''Cassandra'' kao komandu). Zato je potrebno koristiti stariju verziju. 
+
+Takođe, nije ni čudo što Cassandra ima žensko ime, s obzirom da je veoma probirljiva 🙂 Jednostavno odbija da radi sa bilo kojom verzijom py i jave. Moguće je da radi sa nekim višim verzijama od ovih koje ću da vam napišem, ali sad kad mi je proradilo me je strah da isprobavam.
+
+POTREBNE STVARI:
+-Py v2.7 (priložena instalacija)
+-JDK 8u311 (priložena instalacija)
+-Cassandra v3.11.3 (priložena instalacija) //ALI vam prilažem ono što mi je prof Bogdanović poslao. Zipovao mi je distribuciju koju on ima
+-msvcr100.dll (priložen .dll) //NIJE HTELO DA RADI DOK NISAM SKINULA OVAJ DLL!!! Moguće je da radi i sa nekim drugim verzijama svih ovih stvari i sa Cassandrom sa sajta (sa desne strane ima verzija 3.11.11 kao poslednja stabilna, ali predlažem da koristimo ovu koju je profesor poslao (3.11.3))
+
+ŠTA JE POTREBNO URADITI:
+1. Raspakujte apache-cassandra-3.11.3 zip negde. Ja sam raspakovala direktno na C
+2. Instalirajte py (ali čekirajte da doda šta treba u PATH)
+3. Instalirajte JDK
+4. Podesite sledeće system variables:
+   1) CASSANDRA_HOME 
+    putanja: na ROOT folder extractovanog zipa koji vam je na C-u. NE NA BIN, nego će da izgleda na foru: C:\apache-cassandra-3.11.3
+   2) JAVA_HOME
+    putanja treba da bude do JDK-a, ali NE do njegovog bin-a. Defaultna putanja je: C:\Program Files\Java\jdk1.8.0_311
+   3) Ako ste čekirali pri instalaciji pythona da sam doda, ne morate da radite ovaj korak. Ako niste, u Path treba da ima: C:\Python27\ i C:\Python27\Scripts
+   4) Trebalo bi da imate i ovo u Path po defaultu: C:\Program Files (x86)\Common Files\Oracle\Java\javapath 
+
+AKO VAM NEĆE ILI NEMATE NAVEDENI DLL NA SISTEMU: //Ako se javi Exception na cmd na foru "Can't find dependent libraries"
+5. Stavite priložen dll na sistemski direktorijum (C:\Windows\System32\ na 64bit sistemima). Evo odakle sam skinula pa gledajte tu ako nešto neće ili imate 32bit sistem: https://www.dll-files.com/download/f86b5057928fddd315f9a9f46357003e/msvcr100.dll.html?c=R2tWZGNqUHh2QU9xbVNUU1ltYzZuQT09
+Kao što kaže tamo, ako već imate taj dll, sačuvajte original negde za svaki slučaj pa ga overwritujte
+
+POKRETANJE CASSANDRA SERVERA
+Konačno, otvorite cmd, pozicionirajte se na bin folder cassandra foldera koji vam je na C-u i kucajte cassandra ili cassandra console (možda je potrebno da se naznači da se komanda zadaje iz cmd-a, pa zato ovo potonje)
+Trebalo bi da vam na kraju javi samo da možete da enablujete thrift protokol koji je spomenut na nastavi, za slučaj da vam treba
+
+DODATNE NAPOMENE:
+-Profesor Bogdanović mi je rekao takođe da, ako mi ne proradi posle svega ovog (a jeste nakon dodavanja .dll-a), da instaliram Visual C++ Redistributable for Visual Studio
+-Ako ni posle toga neće, možda bi trebalo naći verziju 1.8.0_271 JDK-a. Rekao mi je da on ima tu. Srećno s nalaženjem tho lol
+-Priložene instalacije možete preuzeti ovde: https://we.tl/t-Bv8DgdYdE6
+Tu sam vam priložila i slike kako bi trebalo otprilike da vam izgledaju system varijable i šta bi trebalo da vam javi na konzoli kada ga napravite
+msvcr100.dll free download | DLL‑files.com
+dll-files.com
+https://www.dll-files.com/msvcr100.dll.html
+
+hahahah kad sam odradila sve do koraka 4 i pitala Bogdanovica za pomoc, bukvalno mi je rekao da samo mozemo da nagadjamo u cemu je problem od tog trenutka (tj kad smo videli da sam sve ostalo dobro podesila). Tad je predlozio da skinem ovaj dll i eto… proradilo
+btw podrazumevam da restartujete pc nakon koraka 5, za svaki slucaj
+NoSQL w-https://download.freedownloadmanager.org/Windows-PC/NoSQL-Viewer/FREE-1.0.95.html
+cass-https://archive.apache.org/dist/cassandra/3.11.3/

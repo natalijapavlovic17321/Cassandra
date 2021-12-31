@@ -1,0 +1,28 @@
+Tabele:
+	Korisnici:
+			Administrator: Email : ID, Sifra 
+			Profesor : Email: ID, sifra, ime, prezime, br.fona, kancelarija, 
+			Student: Indeks, Email:ID, sifra, ime ,prezime, godina, semestar
+
+	Ispit: NazivPredmeta, SifraPredmeta:ID, semestar, espb, smer
+
+	Smer: ID, KorisnikEmial, Smer
+
+	Trenutno prijavljeni Ispiti: ID, Sala, Mesto, Vreme:DRKLJUC, StudentEmial, SifraPredmeta, DezurniProfesorEmail
+
+	Polozeni Ispiti: EmailStudnet:ID, sifraPredmeta, Ocena, datum
+
+	Sala: Naziv Sale: ID, Sprat,
+
+	Mesto: ID , Sala, brojMesta
+
+	Zabranjena Prijava: ID, StudentEmail, SifraPrdmeta, datum isteka:DRKLJUC
+	
+	Obavestenja: ID, Profesor,Tekst, ispit tj prdmet, datum objave:DRKLKJUC
+
+	Podrska: Id,tekst, studentemail, done/not:drkljuc
+
+
+
+
+	love for u all <3

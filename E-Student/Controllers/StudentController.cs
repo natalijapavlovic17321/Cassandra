@@ -2,13 +2,60 @@ using Cassandra;
 using E_Student.Models;
 using Microsoft.AspNetCore.Mvc;
 using Cassandra.Mapping;
+using Cassandra.Serialization;
+using E_Student.Converters;
+
 namespace E_Student.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class StudentController : ControllerBase
 {
+    [HttpGet]
+    [Route("getPassedExams/{email}")]
+    public List<PolozeniIspiti> GetAllPassedExams(string email)//znaci svuda gde imamo datetime type moramo ovako valjda //ne moze preko mappera zato sto nije podrzano jos uvek valjda
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        Cassandra.ISession localSession = cluster.Connect("test");
+        //var localSession = SessionManager.GetSession();
+        //IMapper mapper = new Mapper(localSession);
 
+        var result = localSession.Execute("SELECT * FROM polozeni_ispiti WHERE email_studenta='" + email + "' ALLOW FILTERING");
+        List<PolozeniIspiti> predmeti = new List<PolozeniIspiti>();
+        foreach (var row in result)
+        {
+            PolozeniIspiti p = new PolozeniIspiti();
+            p.ID = row.GetValue<String>("id");
+            p.Datum = row.GetValue<DateTime>("datum");
+            p.Email_Studenta = row.GetValue<String>("email_studenta");
+            p.Ocena = row.GetValue<int>("ocena");
+            p.Sifra_Predmeta = row.GetValue<String>("sifra_predmeta");
+
+            predmeti.Add(p);
+
+        }
+
+        //List<PolozeniIspiti> predmeti = mapper.Fetch<PolozeniIspiti>("WHERE email_studenta=? ALLOW FILTERING", email).ToList();
+        cluster.Shutdown();
+
+        return predmeti;
+    }
+    [HttpGet]
+    [Route("getExams/{smer}/{semestar}")]
+    public List<Predmet> GetAllExams(string smer, string semestar)
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        Cassandra.ISession localSession = cluster.Connect("test");
+        //var localSession = SessionManager.GetSession();
+        IMapper mapper = new Mapper(localSession);
+
+        List<Predmet> predmeti = mapper.Fetch<Predmet>("WHERE smer=? AND semestar=? ALLOW FILTERING", smer, semestar).ToList();
+        cluster.Shutdown();
+
+        return predmeti;
+    }
     [HttpGet]
     [Route("getStudents")]
     public List<Student> GetAllStudents()

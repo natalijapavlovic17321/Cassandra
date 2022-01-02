@@ -81,10 +81,110 @@
 
     </div>
   </header><!-- End Header -->
+  <main ng-app="regApp" id="main">
 
-  <main id="main">
+    <section class="intro-single">
+      <div class="container">
+      <div class="row">
+
+
+        <div class="col-lg-6 col-sm-6 mb-6">
+          <!--<button class="btn" id="logIn">Prijavi se</button>-->
+          <a href="prijaviSe.html" class="btn-a">Prijavi se</a>
+
+          <p></p>
+          <div class="hide" id="loginSpecifikacije">
+            <form ng-controller="logCtrl" name="logForm" ng-submit="addPerson(logForm) " novalidate>
+              <p style="color: black;">Username: *</p>
+                <input id="usernameLogin" type="text" name="korisnickoIme" class="form-control" ng-model="korisnickoIme"
+                  required>
+              <!--<div ng-show="logForm.$submitted || logForm.korisnickoIme.$touched">
+                <span style="color: red;" ng-show="logForm.korisnickoIme.$error.required">Neophodno je uneti
+                  username!</span>
+              </div>-->
+              </p>
+              <p style="color: black;">Šifra: *</p>
+                <input id="passwordLogin" type="password" name="lozinka" class="form-control" minlength="6"
+                  ng-model="lozinka" required>
+              <!--<div ng-show="logForm.$submitted || logForm.lozinka.$touched">
+                <span style="color: red;" ng-show="logForm.lozinka.$error.required">Neophodno je uneti šifru!</span>
+              </div>-->
+
+              
+              <!--<p><button id="prijaviSe" class="btn">Prijavi se</button></p>
+              <a href="prijaviSe.html" class="btn-a">Prijavi se</a>-->
+              <p><button id="registrujSe" class="btn-a">Registruj se</button></p>
+              <div style="color: black;">* Obavezna polja</div>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-6 col-sm-6 mb-6">
+          <!--<button type="submit" class="btn-get-started scrollto" id="signUp">Registruj se</button>--->
+          <a href="prijaviSe.html" class="btn-a">Prijavi se</a>
+          <p></p>
+          <div class="hide" id="signupSpecifikacije">
+            <div>
+              <div></div>
+              <form ng-controller="validacijaCtrl" name="regForm" ng-submit="addPerson(regForm)" novalidate>
+                <p style="color: black;">Ime: *<p>
+                  <input id="imeRegister" type="text" name="Name" class="form-control" ng-model="ime" required>
+                <!--<div ng-show="regForm.$submitted || regForm.Name.$touched">
+                  <span style="color: red;" ng-show="regForm.Name.$error.required">Neophodno je uneti ime!</span>
+                </div>-->
+                </p>
+                <p style="color: black;">Prezime: *</p>
+                  <input id="prezimeRegister" type="text" name="Prezime" class="form-control" ng-model="prezime"
+                    required>
+                <!--<div ng-show="regForm.$submitted || regForm.Prezime.$touched">
+                  <span style="color: red;" ng-show="regForm.Prezime.$error.required">Neophodno je uneti prezime!</span>
+                </div>-->
+                </p>
+                <p style="color: black;">Broj indeksa: *</p>
+                  <input id="usernameRegister" type="text" name="Username" class="form-control" ng-model="username"
+                    required>
+                <!--<div ng-show="regForm.$submitted || regForm.Username.$touched">
+                  <span style="color: red;" ng-show="regForm.Username.$error.required">Neophodno je uneti
+                    username!</span>
+                </div>-->
+                </p>
+                <p style="color: black;">Email: *</p>
+                  <input id="emailRegister" type="email" name="Adresa" class="form-control" ng-model="adresa" required>
+                <!--<div ng-show="regForm.$submitted || regForm.Adresa.$touched">
+                  <span style="color: red;" ng-show="regForm.Adresa.$error.required">Neophodno je uneti email</span>
+                  <span style="color: red;" ng-show="regForm.Adresa.$error.email">Pogrešna email adresa. Format email-a
+                    : user@domain.name</span>
+                </div>-->
+                </p>
+                <p style="color: black;">Šifra: *</p>
+                  <input id="passwordRegister" type="password" name="Sifra" class="form-control" minlength="6"
+                    ng-model="sifra" required>
+                <!--<div ng-show="regForm.$submitted || regForm.Sifra.$touched">
+                  <span style="color: red;" ng-show="regForm.Sifra.$error.required">Neophodno je uneti šifru!</span>
+                </div>
+                <P  style="color: red;">{{errortext}}</P>-->
+                </p>
+                <p style="color: black;">Ponovi šifru: *</p>
+                <input id="confirmLReg" type="password" compare-with="sifra" name="confirmR" class="form-control" minlength="6"
+                  ng-model="confirmR" required>
+              <!--<div ng-show="regForm.$submitted || regForm.confirmR.$touched">
+                <span style="color: red;" ng-show="regForm.confirmR.$error.required">Neophodno je uneti šifru!</span>
+                <span style="color: red;" ng-show="regForm.confirmR.$error.compareWith">Šifre se razlikuju.</span> 
+              </div>-->
+                
+                <p><button id="registrujSe" class="btn-a">Registruj se</button></p>
+               
+                <div style="color: black;">* Obavezna polja</div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+  </main>
+  <!--<main id="main">
     <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs" data-aos="fade-in">
+    <!--<div class="breadcrumbs" data-aos="fade-in">
       <div class="container">
         <h2>About Us</h2>
         <p>Est dolorum ut non facere possimus quibusdam eligendi voluptatem. Quia id aut similique quia voluptas sit quaerat debitis. Rerum omnis ipsam aperiam consequatur laboriosam nemo harum praesentium. </p>
@@ -92,7 +192,7 @@
     </div><!-- End Breadcrumbs -->
 
     <!-- ======= About Section ======= -->
-    <section id="about" class="about">
+    <!--<section id="about" class="about">
       <div class="container" data-aos="fade-up">
 
         <div class="row">
@@ -121,7 +221,7 @@
     </section><!-- End About Section -->
 
     <!-- ======= Counts Section ======= -->
-    <section id="counts" class="counts section-bg">
+    <!--<section id="counts" class="counts section-bg">
       <div class="container">
 
         <div class="row counters">
@@ -152,7 +252,7 @@
     </section><!-- End Counts Section -->
 
     <!-- ======= Testimonials Section ======= -->
-    <section id="testimonials" class="testimonials">
+    <!--<section id="testimonials" class="testimonials">
       <div class="container" data-aos="fade-up">
 
         <div class="section-title">
@@ -178,7 +278,7 @@
               </div>
             </div><!-- End testimonial item -->
 
-            <div class="swiper-slide">
+            <!--<div class="swiper-slide">
               <div class="testimonial-wrap">
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
@@ -193,7 +293,7 @@
               </div>
             </div><!-- End testimonial item -->
 
-            <div class="swiper-slide">
+            <!--<div class="swiper-slide">
               <div class="testimonial-wrap">
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
@@ -206,7 +306,7 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
             <div class="swiper-slide">
               <div class="testimonial-wrap">
@@ -221,7 +321,7 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
             <div class="swiper-slide">
               <div class="testimonial-wrap">
@@ -236,16 +336,16 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
           </div>
           <div class="swiper-pagination"></div>
         </div>
 
       </div>
-    </section><!-- End Testimonials Section -->
+    </section>
 
-  </main><!-- End #main -->
+  </main>End #main -->
 
   <!-- ======= Footer ======= -->
   <footer id="footer">

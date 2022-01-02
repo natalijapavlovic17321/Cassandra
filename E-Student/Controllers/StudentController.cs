@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Cassandra.Mapping;
 using Cassandra.Serialization;
 using E_Student.Converters;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace E_Student.Controllers;
 
@@ -12,6 +14,7 @@ namespace E_Student.Controllers;
 public class StudentController : ControllerBase
 {
     [HttpGet]
+    [Authorize(Roles = "Student")]
     [Route("getPassedExams/{email}")]
     public List<PolozeniIspiti> GetAllPassedExams(string email)//znaci svuda gde imamo datetime type moramo ovako valjda //ne moze preko mappera zato sto nije podrzano jos uvek valjda
     {
@@ -36,8 +39,6 @@ public class StudentController : ControllerBase
             predmeti.Add(p);
 
         }
-
-        //List<PolozeniIspiti> predmeti = mapper.Fetch<PolozeniIspiti>("WHERE email_studenta=? ALLOW FILTERING", email).ToList();
         cluster.Shutdown();
 
         return predmeti;
@@ -57,6 +58,7 @@ public class StudentController : ControllerBase
         return predmeti;
     }
     [HttpGet]
+    [Authorize(Roles = "Student")]
     [Route("getStudents")]
     public List<Student> GetAllStudents()
     {

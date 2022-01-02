@@ -15,22 +15,18 @@ namespace E_Student.Controllers;
 [Route("[controller]")]
 public class LoginRegister : ControllerBase
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfiguration Configuration;
+
+    public LoginRegister(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
 
     [HttpPost]
     [AllowAnonymous]
     [Route("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public IActionResult Login([FromBody] LoginModel model)
     {
-        //https://localhost:7078/LoginRegister/Login
-        //         curl -X 'POST' \
-        //   'https://localhost:7078/LoginRegister/Login' \
-        //   -H 'accept: */*' \
-        //   -H 'Content-Type: application/json' \
-        //   -d '{
-        //   "userName": "culinjo@elfak.rs",
-        //   "password": "sifra123"
-        // }'
         if (ModelState.IsValid)
         {
             Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
@@ -39,9 +35,9 @@ public class LoginRegister : ControllerBase
             IMapper mapper = new Mapper(localSession);
 
             LoginRegisterModels student = mapper.FirstOrDefault<LoginRegisterModels>("WHERE email=? AND password_hash=?  ALLOW FILTERING", model.UserName, model.Password);
+            cluster.Shutdown();
             if (student == null)
             {
-                cluster.Shutdown();
                 return Unauthorized();
             }
             var authClaims = new List<Claim>
@@ -50,10 +46,10 @@ public class LoginRegister : ControllerBase
                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                                new Claim(ClaimTypes.Role, student.Role)
                             };
-            SymmetricSecurityKey authSiginKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("hMZ5iTgMLV2uawM8R8E7ihfNlzko6P46"));
+            SymmetricSecurityKey authSiginKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"]));
             JwtSecurityToken token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
+            issuer: Configuration["JWT:ValidIssuer"],
+            audience: Configuration["JWT:ValidAudience"],
             expires: DateTime.Now.AddDays(1),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSiginKey, SecurityAlgorithms.HmacSha256Signature)
@@ -61,7 +57,8 @@ public class LoginRegister : ControllerBase
             return Ok(new
             {
                 tokens = new JwtSecurityTokenHandler().WriteToken(token),
-                ValidTo = token.ValidTo.ToString("yyyy-MM-ddThh:mm:ss")
+                ValidTo = token.ValidTo.ToString("yyyy-MM-ddThh:mm:ss"),
+                role = student.Role
             });
         }
         return Unauthorized();

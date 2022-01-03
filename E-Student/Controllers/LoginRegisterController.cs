@@ -42,9 +42,9 @@ public class LoginRegister : ControllerBase
             }
             var authClaims = new List<Claim>
                             {
-                               new Claim(ClaimTypes.Name,student.Email),
+                               new Claim(ClaimTypes.Name,student.Email!),
                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                               new Claim(ClaimTypes.Role, student.Role)
+                               new Claim(ClaimTypes.Role, student.Role!)
                             };
             SymmetricSecurityKey authSiginKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"]));
             JwtSecurityToken token = new JwtSecurityToken(

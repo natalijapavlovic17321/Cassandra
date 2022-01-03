@@ -14,7 +14,7 @@ namespace E_Student.Controllers;
 public class StudentController : ControllerBase
 {
     [HttpGet]
-    [Authorize(Roles = "Student")]
+    //[Authorize(Roles = "Student")]
     [Route("getPassedExams/{email}")]
     public List<PolozeniIspiti> GetAllPassedExams(string email)//znaci svuda gde imamo datetime type moramo ovako valjda //ne moze preko mappera zato sto nije podrzano jos uvek valjda
     {
@@ -31,7 +31,7 @@ public class StudentController : ControllerBase
         {
             PolozeniIspiti p = new PolozeniIspiti();
             p.ID = row.GetValue<String>("id");
-            p.Datum = row.GetValue<DateTime>("datum");
+            p.Rok = row.GetValue<String>("rok");
             p.Email_Studenta = row.GetValue<String>("email_studenta");
             p.Ocena = row.GetValue<int>("ocena");
             p.Sifra_Predmeta = row.GetValue<String>("sifra_predmeta");
@@ -45,20 +45,30 @@ public class StudentController : ControllerBase
     }
     [HttpGet]
     [Route("getExams/{smer}/{semestar}")]
-    public List<Predmet> GetAllExams(string smer, string semestar)
+    public IActionResult GetAllExams(string smer, string semestar)
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
-        Cassandra.ISession localSession = cluster.Connect("test");
-        //var localSession = SessionManager.GetSession();
-        IMapper mapper = new Mapper(localSession);
 
-        List<Predmet> predmeti = mapper.Fetch<Predmet>("WHERE smer=? AND semestar=? ALLOW FILTERING", smer, semestar).ToList();
-        cluster.Shutdown();
-
-        return predmeti;
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            List<Predmet> predmeti = new List<Predmet>();
+            predmeti = mapper.Fetch<Predmet>("WHERE smer=? AND semestar=? ALLOW FILTERING", smer, semestar).ToList();
+            return new JsonResult(predmeti);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
     }
+
     [HttpGet]
-    [Authorize(Roles = "Student")]
+    //[Authorize(Roles = "Student")]
     [Route("getStudents")]
     public List<Student> GetAllStudents()
     {

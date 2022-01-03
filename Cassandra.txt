@@ -1,28 +1,41 @@
 Tabele:
-	Korisnici:
-			Administrator: Email : ID, Sifra 
-			Profesor : Email: ID, sifra, ime, prezime, br.fona, kancelarija, 
-			Student: Indeks, Email:ID, sifra, ime ,prezime, godina, semestar
+	##Korisnici:
+			##Administrator: Email : ID, Sifra -- ovo ce bude samo u login_register bazu
+			##Profesor : Email: ID, sifra, ime, prezime, br.fona, kancelarija, 
+			##Student: Indeks, Email:ID, sifra, ime ,prezime, godina, semestar, smer,odobren/odbijen
 
-	Ispit: NazivPredmeta, SifraPredmeta:ID, semestar, espb, smer
+	##VezaProfesor-Predmet njegovi predmeti: Idveze, idprof,idpredmeta
 
-	Smer: ID, KorisnikEmial, Smer
+	##Predmet: NazivPredmeta, SifraPredmeta:ID, semestar, espb, smer
 
-	Trenutno prijavljeni Ispiti: ID, Sala, Mesto, Vreme:DRKLJUC, StudentEmial, SifraPredmeta, DezurniProfesorEmail
+	##Veza Predmet-Rok satnica: id, idPredemta, idRoka, Vreme,Datum
 
-	Polozeni Ispiti: EmailStudnet:ID, sifraPredmeta, Ocena, datum
+	##Trenutno prijavljeni Ispiti: ID, ROK:DRKLJUC, StudentEmial, SifraPredmeta, DezurniProfesorEmail,Sala, Mesto
 
-	Sala: Naziv Sale: ID, Sprat,
+	##Polozeni Ispiti: EmailStudnet:ID, sifraPredmeta, Ocena, NazivRoka
 
-	Mesto: ID , Sala, brojMesta
+	##Sala: Naziv Sale: ID, Sprat,
 
-	Zabranjena Prijava: ID, StudentEmail, SifraPrdmeta, datum isteka:DRKLJUC
+	##Rok: id,Naziv roka, pocetak prijave, zavrsetak prijava, pocetak roka, zavrsetak roka
+
+	##Mesto: ID , Sala:DRKLJUC, brojMesta:DRKLJUC
+
+	##Zabranjena Prijava: ID, StudentEmail, SifraPrdmeta, datum isteka:DRKLJUC
 	
-	Obavestenja: ID, Profesor,Tekst, ispit tj prdmet, datum objave:DRKLKJUC
-
-	Podrska: Id,tekst, studentemail, done/not:drkljuc
+	##Obavestenja: ID, Profesor,Tekst, ispit tj prdmet, datum objave:DRKLKJUC
 
 
-
-
-	love for u all <3
+Administrator: Matee
+		odobravanje profila koji se registruju
+		pravljenje naloga profesorima
+		CRUD predmeta,smerova,sala, mesta
+		dodavanje novog roka
+		CRUD smera korisnika
+Student:slav,sask
+		prijavljivanje ispita, prikaz prijavljenih ispita + prikaz sale i mesta gde polaze nakon zavrsetka
+		,prikaz polozenih, prikaz zabranjenih, prikaz semra i ostalo..
+		prikaz obavestenja,
+		popunjavanje njegovo profila svim informacija + prosecna ocena, 
+Profesor:natal
+		raspodela mesta studentima koji su prijavili njegov ispit,
+		slanje obavestenja, zabrana prijave studentu i predmetu,

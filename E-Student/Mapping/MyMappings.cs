@@ -47,7 +47,7 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Semestar)
         .Column(x => x.Smer);
 
-        For<LoginRegisterModels>().TableName("login_register").PartitionKey(x => x.Email)
+        For<LoginRegister>().TableName("login_register").PartitionKey(x => x.Email)
         .Column(x => x.Password_Hash)//, cm => cm.WithName("passwordHash"))
         .Column(x => x.Role)
         .Column(x => x.Salt);

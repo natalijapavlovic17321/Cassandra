@@ -1,9 +1,9 @@
 namespace E_Student.Models;
 
-public class LoginRegisterModels
+public class LoginRegister
 {
-    public string? Email { get; set; }
-    public string? Password_Hash { get; set; }
-    public string? Role { get; set; }
-    public string? Salt { get; set; }
+    public String? Email { get; set; }
+    public String? Password_Hash { get; set; }
+    public String? Role { get; set; }
+    public String? Salt { get; set; }
 }

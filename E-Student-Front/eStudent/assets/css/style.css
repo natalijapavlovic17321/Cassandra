@@ -88,7 +88,14 @@ span {
   transition: all 0.5s ease-in-out 0s;
 }
 .btna {
-  transition: .5s ease;
+  border: 1px solid rgb(67, 105, 75);
+  border-radius: 50px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 15px 40px;
+  text-transform: uppercase;
+  transition: all 0.5s ease-in-out 0s;
 }
 .btna-default:hover {
   color: #fff;
@@ -1275,7 +1282,13 @@ section {
 --------------------------------------------------------------*/
 .footer {
   background: #2a2c30;
-  padding-top: 50px;
+  bottom: 0;
+  position: relative; 
+
+  width: 100%;
+
+
+
 }
 .footer .footer-logo .navbar-brand {
   color: #fff;
@@ -1286,8 +1299,11 @@ section {
   font-weight: 500;
   height: 100%;
   letter-spacing: 0.2em;
-  padding-left: 0;
-  padding-top: 0;
+  
+  
+ 
+  /*padding-left: 0;
+  padding-top: 0;*/
 }
 .footer .footer-logo p {
   color: #fff;
@@ -1296,7 +1312,7 @@ section {
 }
 .footer .list-menu > h4 {
   color: #fff;
-  padding-bottom: 20px;
+  /*padding-bottom: 20px;*/
 }
 .footer .list-menu ul li a {
   color: #fff;
@@ -1322,4 +1338,39 @@ section {
 .footer .copyrights p a, .footer .copyrights .credits a {
   letter-spacing: 0;
   color: #71c55d;
+}
+.autor{
+
+  font-size: 25px !important;
+  color: #69b37c;
+}
+.box-comments .list-comments .comment-author {
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  .box-comments .list-comments .comment-author {
+    font-size: 2rem;
+  }
+}
+.intro-single {
+  padding: 3rem 0 3rem;
+}
+.main{
+  padding-top: 50px;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+.ispiti{
+  padding-left: 50px ;
+  padding-right: 50px;
 }

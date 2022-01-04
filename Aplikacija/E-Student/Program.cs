@@ -62,6 +62,18 @@ builder.Services.AddAuthentication(options =>
 
 
 MappingConfiguration.Global.Define<MyMappings>();
+builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CORS", builder =>
+                {
+                    builder.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins(new string[]
+                    {
+                        "http://127.0.0.1:5500"
+                    });
+                });
+            });
 
 var app = builder.Build();
 
@@ -74,6 +86,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("CORS");
 app.UseAuthorization();
 
 app.MapControllers();

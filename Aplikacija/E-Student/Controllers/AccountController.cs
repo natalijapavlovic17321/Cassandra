@@ -62,7 +62,7 @@ public class AccountController : ControllerBase
             );
             return Ok(new
             {
-                tokens = new JwtSecurityTokenHandler().WriteToken(token),
+                token = new JwtSecurityTokenHandler().WriteToken(token),
                 ValidTo = token.ValidTo.ToString("yyyy-MM-ddThh:mm:ss"),
                 role = account.Role
             });

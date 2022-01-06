@@ -1,4 +1,4 @@
-export {polozeniIspiti} from "./polozeniIspiti"
+export {polozeniIspiti} from "./polozeniIspiti" //mslm da ide import i da fajl mora sa ekstenzijom .js
 export class student{
     consructor(id, brindeksa,ime,prezime,email,godina,semestar, polozeniIspiti){
         this.kontejner=null;
@@ -10,7 +10,9 @@ export class student{
         this.godina = godina;
         this.semestar = semestar;
         this.polozeniIspiti=polozeniIspiti;
-
+        //vrtn ce da treba i prijavljeni ispiti 
+        // mozda i zabrane
+        // mada nzm dal ce one preko konstruktora da ti se psoledjuju 
     }
     dodajUser(id, brindeksa, ime, prezime, godina,semestar, polozeniIspiti) {
         this.id = id;
@@ -33,7 +35,7 @@ export class student{
         this.crtajIspite(document.getElementById("polozeniIspiti"));
     }
     crtajStudentHTML(host) {
-        document.getElementById("brindeksaUser").innerHTML = this.username;
+        document.getElementById("brindeksaUser").innerHTML = this.username; //nemas username
         document.getElementById("imeUser").innerHTML = this.ime + " " +this.prezime;
         document.getElementById("emailUser").innerHTML = this.email;
 

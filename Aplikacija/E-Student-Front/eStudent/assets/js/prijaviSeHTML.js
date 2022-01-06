@@ -20,26 +20,25 @@ function Login(usern, pass) {
         if (data.role == "Student") {
           location.href = "student.html";
         } else {
-          // dodajte vi sta treba
+          (data.role == "Profesor") 
+           location.href = "profesor.html";
         }
       }
     })
     .catch((error) => console.error("Greska sa prijavljivanjem", error));
 }
+if ( sessionStorage.getItem("token") == null || sessionStorage.getItem("token") == "")  //mslm da treba local ?
+{
+  var d = document.getElementById("login");
+  var userEmail = document.getElementById("usernameLogin").value;
+  var userPassword = document.getElementById("passwordLogin").value;
 
-var d = document.getElementById("login");
-var userEmail = document.getElementById("usernameLogin").value;
-var userPassword = document.getElementById("passwordLogin").value;
-
-d.addEventListener("click", function () {
-  Login(userEmail, userPassword);
-});
-if (
-  sessionStorage.getItem("token") == null ||
-  sessionStorage.getItem("token") == ""
-) {
-  //registracija , login
-} else {
+  d.addEventListener("click", function () {
+        Login(userEmail, userPassword);
+  });
+} 
+else 
+{
   alert("Vec ste prijavljeni");
   location.href = "student.html";
 }

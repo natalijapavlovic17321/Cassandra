@@ -206,6 +206,47 @@ public class NatalijaController : ControllerBase
             cluster.Shutdown();
         }
     }
+    [HttpGet]
+    [Route("getZabrana/{email}")]
+    public IActionResult ZabraneProfesora(string email) //preuzimanje info o svim zabranama s kojima profesor moze da barata
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            //citanje svih zabrana al poredjenje datuma ne treba se prikazuje ono sto je proslo
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            List<PredajePredmet> result =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
+            List<ZabranjenaPrijava> zabrana= new List<ZabranjenaPrijava>();
+            foreach (var row in result)
+            {
+                //za svaki predmet koji predaje pokupis sve zabrane
+                var result2 = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='" + row.Sifra_predmeta + "' ALLOW FILTERING");
+                foreach(var arow in result2)
+                {
+                    ZabranjenaPrijava o= new ZabranjenaPrijava();
+                    o.Id = arow.GetValue<String>("id");
+                    o.Datum_isteka = arow.GetValue<DateTime>("datum_isteka");
+                    o.Email_student = arow.GetValue<String>("email_student");
+                    o.Sifra_predmeta = arow.GetValue<String>("sifra_predmeta");
+                    o.Razlog = arow.GetValue<String>("razlog");
+                    if(DateTime.Compare(o.Datum_isteka,DateTime.Now)>=0)
+                       zabrana.Add(o);
+                }
+            }
+            return new JsonResult(zabrana);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
     [HttpPost]
     [Route("postObavestenje")]
     public IActionResult postObavestenje([FromBody] Obavestenje obavestenje) //postavljanje obavestenja
@@ -280,14 +321,14 @@ public class NatalijaController : ControllerBase
     }
     [HttpDelete]
     [Route("deleteZabrana/{id}")]
-    public IActionResult DeleteStudent(string id)
+    public IActionResult DeleteZabrana(string id)
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
         try
         {
-            //mozda ispituje dal on moze da izbrise
+            //mozda ispituje dal on moze da izbrise //vrtn ne jer mu vracam sve zabrane koje moze da izbrise
             Cassandra.ISession localSession = cluster.Connect("test");
            // var result=localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='"+sifra+"' AND email_student='"+ email+"' ");
            //string id= result.Id;

@@ -229,4 +229,22 @@ insert into "satnica"("id","rok_id","datum","sifra_predmeta","vreme") values('0'
 // prijave_ispita table data.
 insert into "prijave_ispita"("id","rok_id","dezurni_prof_email","email_studenta","mesto","naziv_sale","sifra_predmeta") values('0','0','prof@elfak.rs','culinjo@elfak.rs','0','NikolaTesla','A234B');
 
-
+CREATE TABLE counting_id (
+    id text,
+    counting text,
+    tabela text,
+    PRIMARY KEY (id)
+) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
+ AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
+ AND compression={'chunk_length_in_kb':'64', 'class':'org.apache.cassandra.io.compress.LZ4Compressor'}
+ AND dclocal_read_repair_chance=0.1
+ AND speculative_retry='99PERCENTILE';
+ 
+ insert into "counting_id"("id","counting","tabela") values('0','2','mesto'); 
+ insert into "counting_id"("id","counting","tabela") values('1','1','obavestenje');
+ insert into "counting_id"("id","counting","tabela") values('2','1','polozeni_ispiti');
+ insert into "counting_id"("id","counting","tabela") values('3','1','predaje_predmet');
+ insert into "counting_id"("id","counting","tabela") values('4','1','prijave_ispita');
+ insert into "counting_id"("id","counting","tabela") values('5','1','rok');
+ insert into "counting_id"("id","counting","tabela") values('6','1','satnica');
+ insert into "counting_id"("id","counting","tabela") values('7','1','zabranjena_prijava');

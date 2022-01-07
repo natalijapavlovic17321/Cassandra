@@ -13,9 +13,10 @@ namespace E_Student.Controllers;
 [Route("[controller]")]
 public class SlavkoController : ControllerBase
 {
-    [HttpGet]
-    [Route("getCurrentExasmPeriodInformations")]
-    public IActionResult prijavljeni()
+    [HttpPost]
+    [Authorize(Roles = "Student")]
+    [Route("prijaviIspite")]
+    public IActionResult prijaviIspite([FromBody] PrijaveIspita ispit)
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -23,9 +24,8 @@ public class SlavkoController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            List<PrijaveIspita> predmeti = new List<PrijaveIspita>();
-            predmeti = mapper.Fetch<PrijaveIspita>().ToList();
-            return new JsonResult(predmeti);
+            mapper.Insert(ispit);
+            return Ok();
         }
         catch (Exception exc)
         {
@@ -35,51 +35,12 @@ public class SlavkoController : ControllerBase
         {
             cluster.Shutdown();
         }
-    }
-    [HttpGet]
-    [Route("getCurrentExamPeriodInformations")]
-    public IActionResult getCurrentExamPeriodInformations()
-    {
-        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
-        definitions.Define(new DateCodec());
-        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
-        try
-        {
-            Cassandra.ISession localSession = cluster.Connect("test");
 
-            DateTime today = DateTime.Today;
-
-
-            var date = today.Year + "-" + today.Month + "-" + today.Day;
-            var result = localSession.Execute("SELECT * FROM rok WHERE pocetak_prijave<='" + date + "' " + "AND kraj_prijave>='" + date + "' ALLOW FILTERING");
-
-            Rok rok = new Rok();
-            foreach (var row in result)
-            {
-                rok.Id = row.GetValue<string>("id");
-                rok.Naziv = row.GetValue<string>("naziv");
-                rok.Pocetak_prijave = row.GetValue<DateTime>("pocetak_roka");
-                rok.Kraj_prijave = row.GetValue<DateTime>("kraj_prijave");
-                rok.Pocetak_roka = row.GetValue<DateTime>("pocetak_roka");
-                rok.Zavrsetak_roka = row.GetValue<DateTime>("zavrsetak_roka");
-            }
-
-            return new JsonResult(rok);
-
-        }
-        catch (Exception exc)
-        {
-            return BadRequest(exc.Message);
-        }
-        finally
-        {
-            cluster.Shutdown();
-        }
     }
     [HttpGet]
     [Authorize(Roles = "Student")]
     [Route("ispitiKojeMozePrijaviti")]
-    public IActionResult ispitiKojeMozePrijaviti()
+    public IActionResult ispitiKojeMozePrijaviti()//dodati ako je vec prijavljen da ne moze da ga prijavljuje/ to mogu iz fetcha drugog pa na frontu da ga maknem
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());

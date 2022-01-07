@@ -45,18 +45,21 @@ class profesor{
     {
         var dugmeObavestenja=document.createElement("button");
         dugmeObavestenja.innerHTML="Dodaj Obaveštenje"
+        //btn on click
         host.appendChild(dugmeObavestenja);
     }
     crtajZabranaPrijave(host)
     {
         var zabranaPrijave=document.createElement("button");
         zabranaPrijave.innerHTML="Dodaj Zabranu"
+        //btn on click
         host.appendChild(zabranaPrijave);
     }
     crtajDodavanjeObavestenja(host)
     {
         var dugmeObavestenja=document.createElement("button");
         dugmeObavestenja.innerHTML="Dodaj Obaveštenje"
+        //btn on click
         host.appendChild(dugmeObavestenja);
     }
     PreuzmiIspite()

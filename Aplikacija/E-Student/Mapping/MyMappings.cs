@@ -58,5 +58,16 @@ public class MyMappings : Cassandra.Mapping.Mappings
        .Column(x => x.Rok)
        .Column(x => x.Sifra_Predmeta, cm => cm.WithName("sifra_predmeta"));
 
+        For<Obavestenje>().TableName("obavestenje").PartitionKey(x => x.Id_obavestenja)
+       .Column(x => x.Datum_objave)
+       .Column(x => x.Email_profesor)
+       .Column(x => x.Sifra_predmeta)
+       .Column(x => x.Tekst);
+
+       For<ZabranjenaPrijava>().TableName("zabranjena_prijava").PartitionKey(x => x.Id)
+       .Column(x => x.Datum_isteka)
+       .Column(x => x.Email_student)
+       .Column(x => x.Razlog)
+       .Column(x => x.Sifra_predmeta);
     }
 }

@@ -1,8 +1,8 @@
 export {polozeniIspiti} from "./polozeniIspiti" //mslm da ide import i da fajl mora sa ekstenzijom .js
 export class student{
-    consructor(id, brindeksa,ime,prezime,email,godina,semestar, polozeniIspiti){
+    consructor(id, brindeksa,ime,prezime,email,godina,semestar, polozeniIspiti,smer){
         this.kontejner=null;
-        this.id = id;
+       // this.id = id;
         this.ime = ime;
         this.prezime = prezime;
         this.brindeksa = brindeksa;
@@ -10,12 +10,13 @@ export class student{
         this.godina = godina;
         this.semestar = semestar;
         this.polozeniIspiti=polozeniIspiti;
+        this.smer=smer
         //vrtn ce da treba i prijavljeni ispiti 
         // mozda i zabrane
         // mada nzm dal ce one preko konstruktora da ti se psoledjuju 
     }
     dodajUser(id, brindeksa, ime, prezime, godina,semestar, polozeniIspiti) {
-        this.id = id;
+        //this.id = id;
         this.ime = ime;
         this.prezime = prezime;
         this.brindeksa = brindeksa;
@@ -24,6 +25,7 @@ export class student{
         this.semestar = semestar;
         this.polozeniIspiti=polozeniIspiti;
         this.pIspiti=[];
+        this.smer=smer
     }
     crtajStudent(){
         const host= document.getElementById("bodyStudent");
@@ -55,4 +57,25 @@ export class student{
         })
         host.appendChild(tableisp);
     }
-}
+    getStudent(){
+        console.log("blaaaa");
+        fetch("https://localhost:7078/Saske/getStudent", {
+                method: "GET",
+                headers: {
+                    //"Content-Type": "application/json",
+                    "accept": "text/plain",
+                    "Authorization": "Bearer " + sessionStorage.getItem("token") 
+                },
+            }).then(p => {
+                p.json().then(data => {
+                    this.email=data.email;
+                    this.ime=data.ime;
+                    this.prezime=dat.prezime;
+                    this.brindeksa = indeks;
+                    this.semestar = semestar;
+                    this.smer=smer;
+                   this.crtajStudent();
+                });
+            });
+    }
+} 

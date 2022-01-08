@@ -247,3 +247,6 @@ CREATE TABLE counting_id (
  insert into "counting_id"("counting","tabela") values('1','rok');
  insert into "counting_id"("counting","tabela") values('1','satnica');
  insert into "counting_id"("counting","tabela") values('1','zabranjena_prijava');
+
+
+insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('1','2021-01-25','culinjo@elfak.rs','prepisivao','A123B');

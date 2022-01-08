@@ -38,7 +38,6 @@ builder.Services.AddSwaggerGen(c =>
               { securitySchema, new[] { "Bearer" } }
           });
             });
-
 builder.Services.AddAuthentication(options =>
          {
              options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,6 +86,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("CORS");
+
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

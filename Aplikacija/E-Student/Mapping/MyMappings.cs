@@ -6,7 +6,6 @@ public class MyMappings : Cassandra.Mapping.Mappings
     public MyMappings()
     {
         For<PrijaveIspita>().TableName("prijave_ispita").PartitionKey(x => x.Id).ClusteringKey(x => x.Rok_id)
-        .Column(x => x.Dezurni_prof_email)
         .Column(x => x.Email_studenta)
         .Column(x => x.Mesto)
         .Column(x => x.Naziv_sale)
@@ -64,10 +63,10 @@ public class MyMappings : Cassandra.Mapping.Mappings
        .Column(x => x.Sifra_predmeta)
        .Column(x => x.Tekst);
 
-       For<ZabranjenaPrijava>().TableName("zabranjena_prijava").PartitionKey(x => x.Id)
-       .Column(x => x.Datum_isteka)
-       .Column(x => x.Email_student)
-       .Column(x => x.Razlog)
-       .Column(x => x.Sifra_predmeta);
+        For<ZabranjenaPrijava>().TableName("zabranjena_prijava").PartitionKey(x => x.Id)
+        .Column(x => x.Datum_isteka)
+        .Column(x => x.Email_student)
+        .Column(x => x.Razlog)
+        .Column(x => x.Sifra_predmeta);
     }
 }

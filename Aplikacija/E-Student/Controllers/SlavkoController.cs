@@ -39,6 +39,45 @@ public class SlavkoController : ControllerBase
     }
     [HttpGet]
     [Authorize(Roles = "Student")]
+    [Route("prijavljeniIspitiUOvomRoku")]
+    public IActionResult prijavljeniIspitiUovomRoku()
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            var studentEmail = HttpContext.User.Identity!.Name;
+
+            DateTime today = DateTime.Today;
+            var date = today.Year + "-" + today.Month + "-" + today.Day;
+
+            var result0 = localSession.Execute("SELECT id FROM rok WHERE pocetak_prijave<='" + date + "' " + "AND kraj_prijave>='" + date + "' ALLOW FILTERING");
+            string rokID = "";
+            foreach (var i in result0)
+            {
+                rokID = i.GetValue<string>("id");
+                break;
+            }
+            var ispiti = mapper.Fetch<PrijaveIspita>("WHERE email_studenta=? AND rok_id=? ALLOW FILTERING", studentEmail, rokID).ToList();
+
+            return new JsonResult(ispiti);
+
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.Message);
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+
+    }
+    [HttpGet]
+    [Authorize(Roles = "Student")]
     [Route("ispitiKojeMozePrijaviti")]
     public IActionResult ispitiKojeMozePrijaviti()//dodati ako je vec prijavljen da ne moze da ga prijavljuje/ to mogu iz fetcha drugog pa na frontu da ga maknem
     {
@@ -66,7 +105,6 @@ public class SlavkoController : ControllerBase
                 rok1.Zavrsetak_roka = row.GetValue<DateTime>("zavrsetak_roka");
             }
 
-
             Student student = mapper.Single<Student>("WHERE email=? ALLOW FILTERING", studentEmail);
             if (student.Odobren == false)
             {
@@ -76,8 +114,13 @@ public class SlavkoController : ControllerBase
             var polozeni = localSession.Execute("SELECT sifra_predmeta FROM polozeni_ispiti WHERE email_studenta='" + student.Email + "' ALLOW FILTERING");//uzimam predmete koje je polozio
             var result = localSession.Execute("SELECT sifra_predmeta FROM zabranjena_prijava WHERE email_student='" + student.Email + "' AND datum_isteka>='" + date + "' ALLOW FILTERING");//uzimam predmete gde ima zabranu
 
+            var vecPrijavljeni = localSession.Execute("SELECT sifra_predmeta FROM prijave_ispita WHERE email_studenta='" + studentEmail + "' AND rok_id='" + rok1.Id + "' ALLOW FILTERING");
             List<String> izbaciPredmete = new List<String>(); //spajam polozene i zabrane u jednu listu stringova
             List<Predmet> mogucePrijave = new List<Predmet>(predmeti);
+            foreach (var row in vecPrijavljeni)
+            {
+                izbaciPredmete.Add(row.GetValue<String>("sifra_predmeta"));
+            }
             foreach (var row in polozeni)
             {
                 izbaciPredmete.Add(row.GetValue<String>("sifra_predmeta"));

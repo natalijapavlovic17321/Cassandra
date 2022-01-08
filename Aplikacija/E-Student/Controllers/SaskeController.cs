@@ -13,11 +13,12 @@ namespace E_Student.Controllers;
 public class SaskeController : ControllerBase
 {
     [HttpGet]
-    [Authorize(Roles = "Student")]
-    [Route("getStudent")]
-    public IActionResult student() 
+    //[Authorize(Roles = "Student")]
+    [Route("getStudent/{email}")]
+    public IActionResult student(string email)
     {
-        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        /*TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
         try
@@ -35,8 +36,8 @@ public class SaskeController : ControllerBase
         finally
         {
             cluster.Shutdown();
-        }    /*Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
-
+        }    Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        */
             try
             {
                 Cassandra.ISession localSession = cluster.Connect("test");
@@ -51,7 +52,7 @@ public class SaskeController : ControllerBase
             finally
             {
                 cluster.Shutdown();
-            }*/
+            }
     }
     [HttpGet]
     [Route("getPolozeniIspiti/{email}")]

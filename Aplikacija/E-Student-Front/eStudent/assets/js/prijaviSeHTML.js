@@ -13,7 +13,8 @@ function Login(usern, pass) {
     .then((data) => {
       if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
       else {
-        sessionStorage.setItem("username", usern);
+       
+        sessionStorage.setItem("username", usern); console.log(usern);
         sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("role", data.role);
         console.log("wtf");

@@ -1,4 +1,4 @@
-import { student } from "./student";
+//import { student } from "./student";
 export class polozeniIspiti{
     constructor(id,naziv, ocena, datum){
         this.kont=null;

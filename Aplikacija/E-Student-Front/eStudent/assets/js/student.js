@@ -1,4 +1,4 @@
-export {polozeniIspiti} from "./polozeniIspiti" //mslm da ide import i da fajl mora sa ekstenzijom .js
+export {polozeniIspiti} from "./polozeniIspiti.js" //mslm da ide import i da fajl mora sa ekstenzijom .js
 export class student{
     consructor(id, brindeksa,ime,prezime,email,godina,semestar, polozeniIspiti,smer){
         this.kontejner=null;
@@ -57,25 +57,61 @@ export class student{
         })
         host.appendChild(tableisp);
     }
-    getStudent(){
-        console.log("blaaaa");
-        fetch("https://localhost:7078/Saske/getStudent", {
+    /*getStudent(){
+        console.log(this.email)
+        fetch("https://localhost:7078/Saske/getStudent/"+this.email, {
+            method: "GET",
+            headers: {
+                //"Content-Type": "application/json",
+                //"accept": "text/plain",
+                //"Authorization": "Bearer " + sessionStorage.getItem("token") 
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+              else {
+                this.email=data.email;
+                this.ime=data.ime;
+                this.prezime=data.prezime;
+                this.brindeksa = indeks;
+                this.semestar = semestar;
+                this.smer=smer;
+                this.crtajStudent();
+              }
+            })
+            .catch((error) => console.error("Greska sa prijavljivanjem", error));
+        }*/
+        getStudent()
+        {
+            fetch("https://localhost:7078/Saske/getStudent/"+this.email, {
                 method: "GET",
                 headers: {
-                    //"Content-Type": "application/json",
-                    "accept": "text/plain",
-                    "Authorization": "Bearer " + sessionStorage.getItem("token") 
+                  "Content-Type": "application/json",
                 },
-            }).then(p => {
-                p.json().then(data => {
+                body: JSON.stringify({
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+                  else {
                     this.email=data.email;
                     this.ime=data.ime;
-                    this.prezime=dat.prezime;
+                    this.prezime=data.prezime;
                     this.brindeksa = indeks;
                     this.semestar = semestar;
                     this.smer=smer;
-                   this.crtajStudent();
-                });
-            });
+                    this.crtajStudent();
+                  }
+                })
+                .catch((error) => console.error("Greska sa prijavljivanjem", error));
+        } 
+    setEmail(e)
+    {
+        this.email=e;
     }
 } 

@@ -1,23 +1,27 @@
 import { student } from "./student.js";
-/*if(sessionStorage.getItem("token")==null || sessionStorage.getItem("token")=="")
+var s=new student();
+if(sessionStorage.getItem("token")==null || sessionStorage.getItem("token")=="")
 {
     alert("Niste prijavljeni! Prijavite se!");
-    location.href="prijaviSe.html";
+    location.href="index.html";
 }
-else{*/
-loadStudent()
-function loadStudent(){
-  console.log("stigo ovde");
-  var s=new student();
-  s.getStudent();
+else
+{
+    //if(sessionStorage.getItem("role")=="Student")
+    //{
+      s.setEmail(sessionStorage.getItem("username"));
+    //}
+    
+    s.getStudent();
 
-  var odjaviSeBtn = document.getElementById("btnOdjaviSe");
-  odjaviSeBtn.addEventListener("click", console.log("odjavi se"));
+    //var odjaviSeBtn = document.getElementById("btnOdjaviSe");
+    //odjaviSeBtn.addEventListener("click",odjaviSe());
 
-  function odjaviSe()
-  {
-      console.log("odjavi se");
+ 
+}
+/*odjaviSe()
+{
+    console.log("odjavi se");
     sessionStorage.clear();
     location.href ="index.html"
-  }
-}
+}*/

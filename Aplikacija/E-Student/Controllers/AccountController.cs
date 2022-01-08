@@ -103,7 +103,8 @@ public class AccountController : ControllerBase
             {
                 Cassandra.ISession localSession = cluster.Connect("test");
                 IMapper mapper = new Mapper(localSession);
-                var check = mapper.Single<LoginRegister>("WHERE email=?", register.Email);
+                var check = mapper.FirstOrDefault<LoginRegister>("WHERE email=?", register.Email);
+
                 if (check != null)
                 {
                     return BadRequest("Postoji osoba sa tim emailom");

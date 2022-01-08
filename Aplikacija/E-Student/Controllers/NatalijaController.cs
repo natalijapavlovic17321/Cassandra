@@ -261,12 +261,16 @@ public class NatalijaController : ControllerBase
             //za id mora da se izracua i strpa u obavestenje.Id_obavestenja
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='obavestenje' ALLOW FILTERING").First();
+            obavestenje.Id_obavestenja=id.GetValue<String>("counting");
             Profesor prof=mapper.Single<Profesor>("WHERE email=?", obavestenje.Email_profesor);
             Predmet pred=mapper.Single<Predmet>("WHERE sifra_predmeta=?", obavestenje.Sifra_predmeta);
             //var result = localSession.Execute("SELECT * FROM obavestenje WHERE sifra_predmeta='"+obavestenje.Sifra_predmeta+"' AND email_profesor='"+ obavestenje.Email_profesor+"' AND tekst='"+ obavestenje.Tekst +"' ALLOW FILTERING");
             if(prof != null && pred!= null )
             {
+                string noviID=(Int32.Parse(obavestenje.Id_obavestenja)+1).ToString();
                 mapper.Insert<Obavestenje>(obavestenje);
+                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='obavestenje'");
                 return Ok();
             }
             else 
@@ -292,17 +296,19 @@ public class NatalijaController : ControllerBase
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
         try
         {
-            //ispituje i da li on moze da postavi zabranu za taj ispit //predavac
-            // da li moze da se postavi zabrana tom studentu tj da li uoste taj student slusa predmet
-            //za id mora da se izracua i strpa u obavestenje.Id_obavestenja
+            //da li moze da se postavi zabrana tom studentu tj da li uoste taj student slusa predmet
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='zabranjena_prijava' ALLOW FILTERING").First();
+            zabrana.Id=id.GetValue<String>("counting");
             Student prof=mapper.Single<Student>("WHERE email=?", zabrana.Email_student);
             Predmet pred=mapper.Single<Predmet>("WHERE sifra_predmeta=?", zabrana.Sifra_predmeta);
             var result = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='"+zabrana.Sifra_predmeta+"' AND email_student='"+ zabrana.Email_student+"' ALLOW FILTERING");
-            if(prof != null && pred!= null && result==null)
+            if(prof != null && pred!= null && result== null)
             {
                 mapper.Insert<ZabranjenaPrijava>(zabrana);
+                string noviID=(Int32.Parse(zabrana.Id)+1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='zabranjena_prijava'");
                 return Ok();
             }
             else 

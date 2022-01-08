@@ -1,8 +1,7 @@
-import predmet from "./predmet.js"
+import {predmet} from "./predmet.js"
 class profesor{
-    consructor(id, email,ime,prezime,godina,brtel, kancelarija){
+    consructor(email,ime,prezime,godina,brtel, kancelarija){
         this.kontejnerProfesor=null;
-        this.id = id;
         this.ime = ime;
         this.prezime = prezime;
         this.email = email;
@@ -10,13 +9,20 @@ class profesor{
         this.kancelarija = kancelarija;
         this.ispiti=[]
     }
-    dodajProfesor(id, email,ime,prezime,godina,brtel, kancelarija){
-        this.id = id;
+    dodajProfesor(email,ime,prezime,godina,brtel, kancelarija){
         this.ime = ime;
         this.prezime = prezime;
         this.email = email;
         this.brtel = brtel;
         this.kancelarija = kancelarija;
+    }
+    dodajPredmet(p)
+    {
+        this.ispiti.append(p);
+    }
+    setEmail(e)
+    {
+        this.email=e;
     }
     crtajProfesor(){
         const host= document.getElementById("bodyProfesor");
@@ -24,13 +30,13 @@ class profesor{
         throw new Error("Greska u hostu");
 
         this.crtajProfesorHTML(document.getElementById("mainProfesor"));
-        this.crtajIspite("ispitiProfesor")
+        this.crtajIspite("crtajPredmeteprofesora")
         this.crtajDodavanjeObavestenja(document.getElementById("obavestenjaProfesor"));
         this.crtajZabranaPrijave(document.getElementById("zabranaProfesor"));
         this.crtajRaspodelaMesta(document.getElementById("mestaProfesor"));
     }
     crtajProfesorHTML(host) {
-        document.getElementById("imeUser").innerHTML = this.ime + " " +this.prezime;
+        document.getElementById("imeProf").innerHTML = this.ime  +this.prezime;
         document.getElementById("emailUser").innerHTML = this.email;
         document.getElementById("kancelarijaUser").innerHTML = this.kancelarija;
         document.getElementById("brojUser").innerHTML = this.brtel;
@@ -62,8 +68,55 @@ class profesor{
         //btn on click
         host.appendChild(dugmeObavestenja);
     }
+    getProfesor()
+    {
+        fetch("https://localhost:7078/Natalija/getProfesor/"+this.email, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+              else {
+                this.email=data.email;
+                this.ime=data.ime;
+                this.prezime=data.prezime;
+                this.kancelarija=data.kancelarija;
+                this.brtel=data.br_telefona;
+                this.crtajProfesorHTML(document.getElementById("mainProfesor"));
+              }
+            })
+            .catch((error) => console.error("Greska sa prijavljivanjem", error));
+    }
     PreuzmiIspite()
     {
-        //fetch
+        fetch("https://localhost:7078/Natalija/getProfesor/"+this.email, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+              else {
+                data.forEach(element => {
+                    var p1 = new predmet( element.sifra_predmeta, element.espb,element.naziv_predmeta,element.semestar,element.smer);
+                    /*p1.sifra_predmeta = element.sifra_predmeta;
+                    p1.espb = element.espb;
+                    p1.semestar=element.semestar;
+                    p1.smer = element.smer;*/
+                    this.dodajPredmet(p1);
+                });
+                this.crtajIspite(document.getElementById("crtajPredmeteprofesora"));
+              }
+            })
+            .catch((error) => console.error("Greska sa prijavljivanjem", error));
     }
 }

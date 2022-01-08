@@ -80,7 +80,7 @@ span {
 .btn {
   border: 1px solid rgb(67, 105, 75);
   border-radius: 50px;
-  color: #fff;
+  color: rgb(23, 121, 99);
   font-size: 11px;
   font-weight: 600;
   padding: 15px 40px;
@@ -90,10 +90,11 @@ span {
 .btna {
   border: 1px solid rgb(67, 105, 75);
   border-radius: 50px;
-  color: #fff;
+  color: rgb(116, 14, 14);
   font-size: 11px;
   font-weight: 600;
   padding: 15px 40px;
+  margin-top: 10px;
   text-transform: uppercase;
   transition: all 0.5s ease-in-out 0s;
 }
@@ -109,7 +110,7 @@ span {
 }
 
 .btna.btn-a {
-  background-color: #000000;
+  background-color: #275e44;
   color: #ffffff;
 }
 
@@ -1373,4 +1374,10 @@ td, th {
 .ispiti{
   padding-left: 50px ;
   padding-right: 50px;
+}
+.inarow{
+  display: flex;
+  flex: wrap;
+  align-items: center;
+  justify-content: space-between;
 }

@@ -68,5 +68,12 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Email_student)
         .Column(x => x.Razlog)
         .Column(x => x.Sifra_predmeta);
+
+        For<Rok>().TableName("rok").PartitionKey(x => x.Id)
+        .Column(x => x.Pocetak_roka)
+        .Column(x => x.Kraj_prijave)
+        .Column(x => x.Naziv)
+        .Column(x => x.Pocetak_prijave)
+        .Column(x => x.Zavrsetak_roka);
     }
 }

@@ -128,6 +128,63 @@ public class AccountController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("registerProfesor")]
+    public object ProfesorRegistration(ProfesorRegistrationModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+            var profesor = new Profesor()
+            {
+                Email = model.Email,
+                Ime = model.Ime,
+                Prezime = model.Prezime,
+                Br_telefona = model.Br_telefona,
+                Kancelarija = model.Kancelarija
+            };
+            var salt = GenerateSalt(70);
+            var hashPass = HashPassword(model.Password!, salt, 10101, 70);
+            var register = new LoginRegister()
+            {
+                Email = model.Email,
+                Role = "Profesor",
+                Password_Hash = hashPass,
+                Salt = salt
+            };
+
+            try
+            {
+                Cassandra.ISession localSession = cluster.Connect("test");
+                IMapper mapper = new Mapper(localSession);
+                var check = mapper.FirstOrDefault<LoginRegister>("WHERE email=?", register.Email);
+
+                if (check != null)
+                {
+                    return BadRequest("Postoji osoba sa tim emailom");
+                }
+                mapper.InsertIfNotExists<Profesor>(profesor);
+                mapper.InsertIfNotExists<LoginRegister>(register);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                cluster.Shutdown();
+            }
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
     public static string GenerateSalt(int nSalt)
     {
         var saltBytes = new byte[nSalt];

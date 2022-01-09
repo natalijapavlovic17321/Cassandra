@@ -37,7 +37,6 @@ public class AccountController : ControllerBase
 
             LoginRegister account = mapper.FirstOrDefault<LoginRegister>("WHERE email=?", model.Email);
             var hash = HashPassword(model.Password!, account.Salt!, 10101, 70);
-            cluster.Shutdown();
             if (account == null)
             {
                 return Unauthorized();
@@ -60,11 +59,21 @@ public class AccountController : ControllerBase
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSiginKey, SecurityAlgorithms.HmacSha256Signature)
             );
+            var student = localSession.Execute("SELECT odobren FROM student WHERE email='" + model.Email + "'");
+            cluster.Shutdown();
+            bool test = false;
+            foreach (var i in student)
+            {
+                test = i.GetValue<bool>("odobren");
+                break;
+            }
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 ValidTo = token.ValidTo.ToString("yyyy-MM-ddThh:mm:ss"),
-                role = account.Role
+                role = account.Role,
+                odobren = test
+
             });
         }
         return Unauthorized();
@@ -116,7 +125,7 @@ public class AccountController : ControllerBase
             catch (Exception ex)
             {
 
-                throw ex;
+                return BadRequest(ex.Message);
             }
             finally
             {

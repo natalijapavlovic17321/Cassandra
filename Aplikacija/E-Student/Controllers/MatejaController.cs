@@ -249,7 +249,7 @@ public class MatejaController : ControllerBase
         }
     }
 
-    [HttpPost]
+    /*[HttpPost]
     [Route("addMesto")]
     public IActionResult AddMesto([FromBody] Mesto mesto)
     {
@@ -288,7 +288,7 @@ public class MatejaController : ControllerBase
         {
             cluster.Shutdown();
         }
-    }
+    }*/
 
     [HttpDelete]
     [Route("deleteMesto/{id}")]

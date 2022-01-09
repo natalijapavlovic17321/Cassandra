@@ -6,5 +6,6 @@ public class Satnica
     public DateTime Datum { get; set; }
     public String? Sifra_predmeta { get; set; }
     public String? Vreme { get; set; }
+    public String? Naziv_sale {get;set;}
 }
 

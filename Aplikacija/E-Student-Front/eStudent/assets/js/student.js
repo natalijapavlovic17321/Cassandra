@@ -1,6 +1,6 @@
-import {polozeniIspiti} from "./polozeniIspiti.js" //mslm da ide import i da fajl mora sa ekstenzijom .js
+import {polozeniIspiti} from "./polozeniIspiti.js" 
 export class student{
-    consructor(id, indeks,ime,prezime,email,godina,semestar,smer){
+    constructor(id, indeks,ime,prezime,email,godina,semestar,smer){
         this.kontejner=null;
        // this.id = id;
         this.ime = ime;

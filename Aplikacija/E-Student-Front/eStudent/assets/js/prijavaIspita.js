@@ -10,7 +10,7 @@ function prijavljeniIspiti() {
   let header = document.createElement("h4");
   header.innerHTML = "Prijavljeni Ispiti U OvomRoku";
   tableDiv.appendChild(header);
-  let staticInfo = ["Naziv ispita", "Datum", "Vreme"];
+  let staticInfo = ["Naziv ispita", "Datum", "Vreme", "Sala"];
   let tablica = document.createElement("table");
   tablica.id = "tablicaPrijavljeni";
   let row = tablica.insertRow();
@@ -36,6 +36,17 @@ function prijavljeniIspiti() {
 
         cell = row.insertCell();
         cell.innerHTML = element.vreme;
+
+        cell = row.insertCell();
+        if (
+          element.sala == null ||
+          element.sala == "" ||
+          element.sala == "null"
+        ) {
+          cell.innerHTML = "Jos uvek nije odluceno";
+        } else {
+          cell.innerHTML = element.sala;
+        }
       });
     });
   });
@@ -142,7 +153,7 @@ function mogucePrijave() {
         cell1.innerHTML = element.datumIVreme[0].vreme;
 
         cell1 = row1.insertCell();
-        cell1.innerHTML = element.brojPrijava < 1 ? "0" : "1400";
+        cell1.innerHTML = element.brojPrijava < 3 ? "0" : "1400";
         cell1.id = element.predmet.sifra_Predmeta + "price";
       });
     });

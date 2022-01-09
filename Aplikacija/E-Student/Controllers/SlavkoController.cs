@@ -102,12 +102,13 @@ public class SlavkoController : ControllerBase
             foreach (var i in ispiti)
             {
                 predmet = mapper.Single<Predmet>("WHERE sifra_predmeta=?", i.Sifra_predmeta);
-                var r = localSession.Execute("SELECT datum,vreme FROM satnica WHERE sifra_predmeta='" + i.Sifra_predmeta + "'ALLOW FILTERING");
+                var r = localSession.Execute("SELECT datum,vreme,naziv_sale FROM satnica WHERE sifra_predmeta='" + i.Sifra_predmeta + "'ALLOW FILTERING");
                 foreach (var j in r)
                 {
                     satnica.Datum = j.GetValue<DateTime>("datum");
                     satnica.Vreme = j.GetValue<string>("vreme");
-                    returnValue.Add(new { Naziv = predmet.NazivPredmeta, Datum = satnica.Datum, Vreme = satnica.Vreme });
+                    satnica.Naziv_sale = j.GetValue<string>("naziv_sale");
+                    returnValue.Add(new { Naziv = predmet.NazivPredmeta, Datum = satnica.Datum, Vreme = satnica.Vreme, Sala = satnica.Naziv_sale });
                     break;
                 }
             }

@@ -14,8 +14,13 @@ function Login(usern, pass) {
       console.log(data);
       if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
       else {
-       
-        sessionStorage.setItem("username", usern); console.log(usern);
+        if (data.odobren == false) {
+          alert("Vas nalog jos uvek nije odobren");
+          location.href = "index.html";
+          return;
+        }
+        sessionStorage.setItem("username", usern);
+        console.log(usern);
         sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("role", data.role);
 

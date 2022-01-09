@@ -11,8 +11,8 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Naziv_sale)
         .Column(x => x.Sifra_predmeta);
 
-        For<Mesto>().TableName("mesto").PartitionKey(x => x.Id).ClusteringKey(x => x.Sala_naziv)
-        .Column(x => x.Mesto_br);
+        //For<Mesto>().TableName("mesto").PartitionKey(x => x.Id).ClusteringKey(x => x.Sala_naziv)
+        //.Column(x => x.Mesto_br);
 
         For<PredajePredmet>().TableName("predaje_predmet").PartitionKey(x => x.Id)
         .Column(x => x.Sifra_predmeta)
@@ -25,9 +25,8 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Prezime);
 
         For<Sala>().TableName("sala").PartitionKey(x => x.Naziv)
+        .Column(x => x.Kapacitet)
         .Column(x => x.Sprat);
-
-
 
 
         For<Student>().TableName("student").PartitionKey(x => x.Email)
@@ -75,5 +74,6 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Naziv)
         .Column(x => x.Pocetak_prijave)
         .Column(x => x.Zavrsetak_roka);
+
     }
 }

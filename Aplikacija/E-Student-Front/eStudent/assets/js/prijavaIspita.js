@@ -5,6 +5,56 @@ if (
   alert("Niste prijavljeni! Prijavite se!");
   location.href = "prijaviSe.html";
 }
+function prijavljeniIspiti() {
+  let tableDiv = document.getElementById("prijavljeni");
+  let header = document.createElement("h4");
+  header.innerHTML = "Prijavljeni Ispiti U OvomRoku";
+  tableDiv.appendChild(header);
+  let staticInfo = ["Naziv ispita", "Datum", "Vreme", "Sala"];
+  let tablica = document.createElement("table");
+  tablica.id = "tablicaPrijavljeni";
+  let row = tablica.insertRow();
+  for (let i = 0; i < staticInfo.length; i++) {
+    let cell = row.insertCell();
+    cell.innerHTML = staticInfo[i];
+  }
+  fetch("https://localhost:7078/Slavko/prijavljeniIspitiUOvomRoku", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
+    },
+  }).then((p) => {
+    p.json().then((data) => {
+      data.forEach((element) => {
+        row = tablica.insertRow();
+        let cell = row.insertCell();
+        cell.innerHTML = element.naziv;
+
+        cell = row.insertCell();
+        cell.innerHTML = element.datum.slice(0, 10);
+
+        cell = row.insertCell();
+        cell.innerHTML = element.vreme;
+
+        cell = row.insertCell();
+        if (
+          element.sala == null ||
+          element.sala == "" ||
+          element.sala == "null"
+        ) {
+          cell.innerHTML = "Jos uvek nije odluceno";
+        } else {
+          cell.innerHTML = element.sala;
+        }
+      });
+    });
+  });
+
+  tableDiv.appendChild(tablica);
+  fetch;
+}
+prijavljeniIspiti();
 mogucePrijave();
 function mogucePrijave() {
   var tableDiv = document.getElementById("rokInfo");
@@ -20,7 +70,7 @@ function mogucePrijave() {
     "PocetakRoka",
     "KrajRoka",
   ];
-  row = table.insertRow();
+  // row = table.insertRow();
   for (let i = 0; i < staticInfo1.length; i++) {
     let cell = row.insertCell();
     cell.innerHTML = staticInfo1[i];
@@ -103,7 +153,7 @@ function mogucePrijave() {
         cell1.innerHTML = element.datumIVreme[0].vreme;
 
         cell1 = row1.insertCell();
-        cell1.innerHTML = element.brojPrijava < 1 ? "0" : "1400";
+        cell1.innerHTML = element.brojPrijava < 3 ? "0" : "1400";
         cell1.id = element.predmet.sifra_Predmeta + "price";
       });
     });
@@ -111,47 +161,52 @@ function mogucePrijave() {
   tableDiv.appendChild(table1);
 }
 
-function prijavljeniIspiti() {
-  var ispitis = [];
-
-  var i = 1;
+function prijaviIspite() {
+  var lista = [];
   var ck = document.querySelectorAll(".checkBozz");
   var cena = 0;
   ck.forEach((element) => {
     if (element.checked) {
-      let res = new Object();
       let cenaRow = document.getElementById(element.id + "ROW");
       cena += Number(cenaRow.lastChild.innerHTML);
-      cenaRow.parentNode.removeChild(cenaRow);
-      i = i + 3;
-      res.Id = i;
-      res.Sifra_predmeta = element.id;
-      fetch("https://localhost:7078/Slavko/prijaviIspite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + sessionStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          id: "4",
-          rok_id: "0",
-          email_studenta: "email",
-          mesto: "string",
-          naziv_sale: "tes",
-          sifra_predmeta: element.id,
-        }),
-      })
-        .then((p) => {
-          if (p.ok) {
-            alert("Uspesno dodavanje recepta");
-            location.href = "user.html";
-          } else {
-            alert("Greska kod dodavanja");
-          }
-        })
-        .catch((p) => {
-          alert("Greška sa konekcijom.");
-        });
+
+      lista.push(element.id);
+    }
+  });
+  fetch("https://localhost:7078/Slavko/prijaviIspite", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
+    },
+    body: JSON.stringify({
+      dugovanje: cena.toString(),
+      listaSifri: lista,
+    }),
+  })
+    .then((p) => {
+      if (p.ok) {
+        // alert("Uspesno dodavanje recepta");
+        //location.href = "user.html";
+      } else {
+        alert("Greska kod dodavanja");
+      }
+    })
+    .catch((p) => {
+      alert("Greška sa konekcijom.");
+    });
+  let tablica = document.getElementById("tablicaPrijavljeni");
+  ck.forEach((element) => {
+    if (element.checked) {
+      let wholeRow = document.getElementById(element.id + "ROW");
+      let row = tablica.insertRow();
+      let cell = row.insertCell();
+      cell.innerHTML = wholeRow.cells[1].innerHTML;
+      cell = row.insertCell();
+      cell.innerHTML = wholeRow.cells[3].innerHTML;
+      cell = row.insertCell();
+      cell.innerHTML = wholeRow.cells[4].innerHTML;
+      wholeRow.parentNode.removeChild(wholeRow);
     }
   });
   let es = document.getElementById("UkupnoCena");
@@ -159,4 +214,4 @@ function prijavljeniIspiti() {
 }
 
 var dgm = document.getElementById("prijavi");
-dgm.addEventListener("click", prijavljeniIspiti);
+dgm.addEventListener("click", prijaviIspite);

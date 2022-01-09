@@ -1396,6 +1396,7 @@ td, th {
   align-content: space-between;
   margin-top: 30px;
 }
+<<<<<<< HEAD
 tbody tr:nth-child(odd) {
   background-color: rgb(118, 161, 128);
 }
@@ -1473,4 +1474,16 @@ table {
 
 .card .card-footer .count {
   font-size: 14px;
+=======
+.horizon{
+  display: flex;
+  margin: 10px;
+  justify-content:space-evenly;
+}
+.horizon2{
+  display: flex;
+}
+.zabraneProf{
+  margin-top: 20px;
+>>>>>>> baf474752e0a580e518838bddb36e3e7a7dba797
 }

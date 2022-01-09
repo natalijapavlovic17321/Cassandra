@@ -17,6 +17,8 @@ else
         d1.addEventListener("click",dodajObavestenje); 
         d2.addEventListener("click",dodajZabranu); 
         d3.addEventListener("click",dodajSalu); 
+        var d5 = document.getElementById("btPrikaziZabranu");
+        d5.addEventListener("click",prikaziZabranu);
    // }
     /*else
     {
@@ -43,6 +45,12 @@ function dodajZabranu()
     var d5=document.getElementById("divGdeSeRadiSve");
     d5.innerHTML="";
     p.dodajZabrana();
+}
+function prikaziZabranu()
+{
+    var d5=document.getElementById("divGdeSeRadiSve");
+    d5.innerHTML="";
+    p.prikaziZabrana();
 }
 function dodajSalu()
 {

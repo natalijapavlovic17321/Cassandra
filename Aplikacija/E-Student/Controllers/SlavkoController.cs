@@ -16,7 +16,7 @@ public class SlavkoController : ControllerBase
     [HttpPost]
     [Authorize(Roles = "Student")]
     [Route("prijaviIspite")]
-    public IActionResult prijaviIspite([FromBody] PrijaveIspita ispit)
+    public IActionResult prijaviIspite([FromBody] CCC testiram)
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -24,7 +24,41 @@ public class SlavkoController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            mapper.Insert(ispit);
+
+            var ids = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='prijave_ispita' ALLOW FILTERING");
+            DateTime today = DateTime.Today;
+            var date = today.Year + "-" + today.Month + "-" + today.Day;
+
+            var result = localSession.Execute("SELECT id FROM rok WHERE pocetak_prijave<='" + date + "' " + "AND kraj_prijave>='" + date + "' ALLOW FILTERING");
+            var rokID = "";
+            foreach (var i in result)
+            {
+                rokID = i.GetValue<string>("id");
+            }
+            var id = "";
+            foreach (var i in ids)
+            {
+                id = i.GetValue<string>("counting");
+            }
+            int newId = Int32.Parse(id) + 1;
+
+
+            PrijaveIspita prijava = new PrijaveIspita();
+            prijava.Email_studenta = HttpContext.User.Identity!.Name;
+            prijava.Rok_id = rokID;
+
+
+            foreach (string pr in testiram.listaSifri!)
+            {
+                prijava.Sifra_predmeta = pr;
+                prijava.Id = newId.ToString();
+                newId++;
+                mapper.Insert(prijava);
+
+            }
+            localSession.Execute("UPDATE student SET dugovanje='" + testiram.dugovanje + "' WHERE email='" + HttpContext.User.Identity!.Name + "'");
+
+            localSession.Execute("UPDATE counting_id SET counting='" + newId + "' WHERE tabela='prijave_ispita'");
             return Ok();
         }
         catch (Exception exc)
@@ -62,8 +96,23 @@ public class SlavkoController : ControllerBase
                 break;
             }
             var ispiti = mapper.Fetch<PrijaveIspita>("WHERE email_studenta=? AND rok_id=? ALLOW FILTERING", studentEmail, rokID).ToList();
-
-            return new JsonResult(ispiti);
+            Predmet predmet = new Predmet();
+            Satnica satnica = new Satnica();
+            var returnValue = new List<Object>();
+            foreach (var i in ispiti)
+            {
+                predmet = mapper.Single<Predmet>("WHERE sifra_predmeta=?", i.Sifra_predmeta);
+                var r = localSession.Execute("SELECT datum,vreme,naziv_sale FROM satnica WHERE sifra_predmeta='" + i.Sifra_predmeta + "'ALLOW FILTERING");
+                foreach (var j in r)
+                {
+                    satnica.Datum = j.GetValue<DateTime>("datum");
+                    satnica.Vreme = j.GetValue<string>("vreme");
+                    satnica.Naziv_sale = j.GetValue<string>("naziv_sale");
+                    returnValue.Add(new { Naziv = predmet.NazivPredmeta, Datum = satnica.Datum, Vreme = satnica.Vreme, Sala = satnica.Naziv_sale });
+                    break;
+                }
+            }
+            return new JsonResult(returnValue);
 
         }
         catch (Exception exc)
@@ -89,6 +138,19 @@ public class SlavkoController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             var studentEmail = HttpContext.User.Identity!.Name;
+
+            RowSet dug = localSession.Execute("SELECT dugovanje FROM student WHERE email='" + studentEmail + "'");
+            string dugovanje = "";
+
+            foreach (var i in dug)
+            {
+                dugovanje = i.GetValue<string>("dugovanje");
+                break;
+            }
+            if (dugovanje != "0")
+            {
+                return BadRequest("Izmerite prethodna dugovanja");
+            }
 
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;

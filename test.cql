@@ -61,9 +61,10 @@ CREATE TABLE polozeni_ispiti (
  AND dclocal_read_repair_chance=0.1
  AND speculative_retry='99PERCENTILE';
 
-CREATE TABLE sala (
+ CREATE TABLE sala (
     naziv text,
     sprat int,
+    kapacitet int,
     PRIMARY KEY (naziv)
 ) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
  AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
@@ -89,17 +90,6 @@ CREATE TABLE predaje_predmet (
     sifra_predmeta text,
     email_profesora text,
     PRIMARY KEY (id)
-) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
- AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
- AND compression={'chunk_length_in_kb':'64', 'class':'org.apache.cassandra.io.compress.LZ4Compressor'}
- AND dclocal_read_repair_chance=0.1
- AND speculative_retry='99PERCENTILE';
-
-CREATE TABLE mesto (
-    id text,
-    sala_naziv text,
-    mesto_br int,
-    PRIMARY KEY (id, sala_naziv)
 ) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
  AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
  AND compression={'chunk_length_in_kb':'64', 'class':'org.apache.cassandra.io.compress.LZ4Compressor'}
@@ -152,6 +142,7 @@ CREATE TABLE satnica (
     datum date,
     sifra_predmeta text,
     vreme text,
+	naziv_sale text,
     PRIMARY KEY (id, rok_id)
 ) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
  AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
@@ -164,7 +155,6 @@ CREATE TABLE prijave_ispita (
     rok_id text,
     dezurni_prof_email text,
     email_studenta text,
-    mesto text,
     naziv_sale text,
     sifra_predmeta text,
     PRIMARY KEY (id, rok_id)
@@ -193,8 +183,8 @@ insert into "polozeni_ispiti"("id","email_studenta","ocena","rok","sifra_predmet
 
 
 // sala table data.
-insert into "sala"("naziv","sprat") values('NikolaTesla',0);
-insert into "sala"("naziv","sprat") values('525',5);
+insert into "sala"("naziv","kapacitet","sprat") values('NikolaTesla',99,0);
+insert into "sala"("naziv","kapacitet","sprat") values('525',150,5);
 
 
 // profesor table data.
@@ -203,12 +193,6 @@ insert into "profesor"("email","br_telefona","ime","kancelarija","prezime") valu
 
 // predaje_predmet table data.
 insert into "predaje_predmet"("id","email_profesora","sifra_predmeta") values('0','prof@elfak.rs','A123B');
-
-
-// mesto table data.
-insert into "mesto"("id","sala_naziv","mesto_br") values('0','NikolaTesla',0);
-insert into "mesto"("id","sala_naziv","mesto_br") values('1','NikolaTesla',1);
-
 
 // zabranjena_prijava table data.
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('0','2022-01-25','culinjo@elfak.rs','prepisivao','A234B');
@@ -223,11 +207,10 @@ insert into "rok"("id","pocetak_roka","kraj_prijave","naziv","pocetak_prijave","
 
 
 // satnica table data.
-insert into "satnica"("id","rok_id","datum","sifra_predmeta","vreme") values('0','0','2022-01-21','A123B','14:00');
-
+insert into "satnica"("id","rok_id","datum","sifra_predmeta","vreme","naziv_sale") values('0','0','2022-01-21','A123B','14:00','525');
 
 // prijave_ispita table data.
-insert into "prijave_ispita"("id","rok_id","dezurni_prof_email","email_studenta","mesto","naziv_sale","sifra_predmeta") values('0','0','prof@elfak.rs','culinjo@elfak.rs','0','NikolaTesla','A234B');
+insert into "prijave_ispita"("id","rok_id","dezurni_prof_email","email_studenta","naziv_sale","sifra_predmeta") values('0','0','prof@elfak.rs','culinjo@elfak.rs','NikolaTesla','A234B');
 
 CREATE TABLE counting_id (
     counting text,
@@ -239,7 +222,6 @@ CREATE TABLE counting_id (
  AND dclocal_read_repair_chance=0.1
  AND speculative_retry='99PERCENTILE';
  
- insert into "counting_id"("counting","tabela") values('2','mesto'); 
  insert into "counting_id"("counting","tabela") values('1','obavestenje');
  insert into "counting_id"("counting","tabela") values('1','polozeni_ispiti');
  insert into "counting_id"("counting","tabela") values('1','predaje_predmet');

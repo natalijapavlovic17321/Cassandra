@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>E-Student Register</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons-->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Mentor - v4.7.0
+  * Template URL: https://bootstrapmade.com/mentor-free-education-bootstrap-theme/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top">
+    <div class="container d-flex align-items-center">
+
+      <h1 class="logo me-auto"><a href="index.html">eStudent</a></h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+      <nav id="navbar" class="navbar order-last order-lg-0">
+        <ul>
+          <li><a href="index.html">Pocetna strana</a></li>
+          <li><a href="prijaviSe.html">Prijavi se</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header><!-- End Header -->
+<div class="main">
+
+  <main  ng-app="regApp" id="main">
+
+    <section class="intro-single">
+      <div class="container">
+      <div class="row">
+            <div class="col-lg-7 col-sm-7 mb-7">
+            <a ><img src="assets/img/classs.jpg"  width="700" 
+              height="500" alt="" title="" /></a>
+            </div>
+
+            <div class="col-lg-3 col-sm-3 mb-3">
+                
+                <div>
+                    <p style="color: black;">Ime: *<p>
+                        <input id="imeRegister" type="text" name="Name" class="form-control" ng-model="ime" required>
+                    </p>
+                    <p style="color: black;">Prezime: *</p>
+                        <input id="prezimeRegister" type="text" name="Prezime" class="form-control" ng-model="prezime"
+                        required>
+                    </p>
+                    <p style="color: black;">Email: *</p>
+                        <input id="emailRegister" type="email" name="Adresa" class="form-control" ng-model="adresa" required>
+                    </p>
+                    <p style="color: black;">Šifra: *</p>
+                        <input id="passwordRegister" type="password" name="Sifra" class="form-control" minlength="6"
+                        ng-model="sifra" required>
+                    
+                    </p>
+                    <p style="color: black;">Ponovi šifru: *</p>
+                    <input id="confirmLReg" type="password" compare-with="sifra" name="confirmR" class="form-control" minlength="6"
+                        ng-model="confirmR" required>
+
+                    </p>    
+                    <p style="color: black;">Broj telefona: *</p>
+                    <input id="brtelefonaRegister" type="number" name="Number" class="form-control" minlength="10"
+                        ng-model="brtelefona" required>
+                    
+                    </p>
+
+                    <p style="color: black;">Kancelarija: *</p>
+                    <input id="kancelarijaRegister" type="text" name="Kancelarija" class="form-control" 
+                        ng-model="kancelarija" required>
+                    
+                    </p>
+                   
+                    <p><button id="registrujSe" class="btna btn-a">Registruj se</button></p>
+                    
+                    <div style="color: black;">* Obavezna polja</div>
+                    
+                </div>
+                
+            </div>
+        
+        </div>
+      </div>
+      </div>
+    </section>
+  </main>
+  
+</div>
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/purecounter/purecounter.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+  <script type="module" src="assets/js/administrator.js"></script>
+</body>
+
+</html>

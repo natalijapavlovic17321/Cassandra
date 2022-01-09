@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 import {polozeniIspiti} from "./polozeniIspiti.js"
 import { zabranjeniIspiti } from "./zabranjeniIspit.js";
+=======
+import {polozeniIspiti} from "./polozeniIspiti.js" 
+>>>>>>> baf474752e0a580e518838bddb36e3e7a7dba797
 export class student{
-    consructor(id, indeks,ime,prezime,email,godina,semestar,smer){
+    constructor(id, indeks,ime,prezime,email,godina,semestar,smer){
         this.kontejner=null;
        // this.id = id;
         this.ime = ime;

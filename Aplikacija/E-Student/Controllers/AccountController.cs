@@ -37,7 +37,6 @@ public class AccountController : ControllerBase
 
             LoginRegister account = mapper.FirstOrDefault<LoginRegister>("WHERE email=?", model.Email);
             var hash = HashPassword(model.Password!, account.Salt!, 10101, 70);
-            cluster.Shutdown();
             if (account == null)
             {
                 return Unauthorized();
@@ -60,11 +59,21 @@ public class AccountController : ControllerBase
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSiginKey, SecurityAlgorithms.HmacSha256Signature)
             );
+            var student = localSession.Execute("SELECT odobren FROM student WHERE email='" + model.Email + "'");
+            cluster.Shutdown();
+            bool test = false;
+            foreach (var i in student)
+            {
+                test = i.GetValue<bool>("odobren");
+                break;
+            }
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 ValidTo = token.ValidTo.ToString("yyyy-MM-ddThh:mm:ss"),
-                role = account.Role
+                role = account.Role,
+                odobren = test
+
             });
         }
         return Unauthorized();
@@ -110,6 +119,63 @@ public class AccountController : ControllerBase
                     return BadRequest("Postoji osoba sa tim emailom");
                 }
                 mapper.InsertIfNotExists<Student>(student);
+                mapper.InsertIfNotExists<LoginRegister>(register);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+            finally
+            {
+                cluster.Shutdown();
+            }
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("registerProfesor")]
+    public object ProfesorRegistration(ProfesorRegistrationModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+            var profesor = new Profesor()
+            {
+                Email = model.Email,
+                Ime = model.Ime,
+                Prezime = model.Prezime,
+                Br_telefona = model.Br_telefona,
+                Kancelarija = model.Kancelarija
+            };
+            var salt = GenerateSalt(70);
+            var hashPass = HashPassword(model.Password!, salt, 10101, 70);
+            var register = new LoginRegister()
+            {
+                Email = model.Email,
+                Role = "Profesor",
+                Password_Hash = hashPass,
+                Salt = salt
+            };
+
+            try
+            {
+                Cassandra.ISession localSession = cluster.Connect("test");
+                IMapper mapper = new Mapper(localSession);
+                var check = mapper.FirstOrDefault<LoginRegister>("WHERE email=?", register.Email);
+
+                if (check != null)
+                {
+                    return BadRequest("Postoji osoba sa tim emailom");
+                }
+                mapper.InsertIfNotExists<Profesor>(profesor);
                 mapper.InsertIfNotExists<LoginRegister>(register);
                 return Ok();
             }

@@ -1381,3 +1381,14 @@ td, th {
   align-items: center;
   justify-content: space-between;
 }
+.textareas{
+  resize: none;
+  width: 700px;
+  height: 200px;
+}
+.red{
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  margin-top: 30px;
+}

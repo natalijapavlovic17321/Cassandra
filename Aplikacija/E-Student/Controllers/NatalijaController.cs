@@ -101,6 +101,35 @@ public class NatalijaController : ControllerBase
             cluster.Shutdown();
         }
     }
+      [HttpGet]
+    [Route("getProfesorIspitiNazivi/{email}")]
+    public IActionResult profesorNazivi(string email) //preuzimanje info o predmetima nekog profesora
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
+            List<PredajePredmet> result =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
+            List<String> ispiti= new List<String>();
+            foreach (var row in result)
+            {
+                if(row.Sifra_predmeta!=null)
+                    ispiti.Add(row.Sifra_predmeta);
+            }
+            return new JsonResult(ispiti);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
     [HttpGet]
     [Route("getObavestenjaProfesora/{email}")]
     public IActionResult ObavestenjaProfesora(string email) //preuzimanje info o obavestenjima nekog profesora
@@ -304,7 +333,7 @@ public class NatalijaController : ControllerBase
             Student prof=mapper.Single<Student>("WHERE email=?", zabrana.Email_student);
             Predmet pred=mapper.Single<Predmet>("WHERE sifra_predmeta=?", zabrana.Sifra_predmeta);
             var result = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='"+zabrana.Sifra_predmeta+"' AND email_student='"+ zabrana.Email_student+"' ALLOW FILTERING");
-            if(prof != null && pred!= null && result== null)
+            if(prof != null && pred!= null )//&& result== null)
             {
                 mapper.Insert<ZabranjenaPrijava>(zabrana);
                 string noviID=(Int32.Parse(zabrana.Id)+1).ToString();

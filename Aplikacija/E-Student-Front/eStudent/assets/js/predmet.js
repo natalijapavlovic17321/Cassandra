@@ -1,4 +1,4 @@
-class predmet{
+export class predmet{
     constructor(sifra_predmeta,espb,naziv_predmeta,smestar,smer)
     {
         this.sifra_predmeta=sifra_predmeta;

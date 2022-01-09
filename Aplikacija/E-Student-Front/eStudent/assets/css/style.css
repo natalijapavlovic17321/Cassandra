@@ -1284,14 +1284,9 @@ section {
 .footer {
   background: #2a2c30;
   bottom: 0;
-  position: relative; 
-
+  position: sticky; 
+ 
   width: 100%;
-
-
-    
-
-     /* height:60px; Height of the footer */
 
 
 }
@@ -1328,9 +1323,9 @@ section {
 }
 .footer .copyrights {
   background: #fff;
-  margin-top: 50px;
+  margin-top: 30px;
   text-align: center;
-  padding: 25px;
+  padding: 20px;
 }
 .footer .copyrights p, .footer .copyrights .credits {
   margin: 0;
@@ -1396,7 +1391,6 @@ td, th {
   align-content: space-between;
   margin-top: 30px;
 }
-<<<<<<< HEAD
 tbody tr:nth-child(odd) {
   background-color: rgb(118, 161, 128);
 }
@@ -1474,7 +1468,7 @@ table {
 
 .card .card-footer .count {
   font-size: 14px;
-=======
+}
 .horizon{
   display: flex;
   margin: 10px;
@@ -1485,5 +1479,13 @@ table {
 }
 .zabraneProf{
   margin-top: 20px;
->>>>>>> baf474752e0a580e518838bddb36e3e7a7dba797
 }
+.uplata{
+
+    color: #000;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 2;
+  }

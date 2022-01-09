@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 import {polozeniIspiti} from "./polozeniIspiti.js"
 import { zabranjeniIspiti } from "./zabranjeniIspit.js";
-=======
-import {polozeniIspiti} from "./polozeniIspiti.js" 
->>>>>>> baf474752e0a580e518838bddb36e3e7a7dba797
+
 export class student{
     constructor(id, indeks,ime,prezime,email,godina,semestar,smer){
         this.kontejner=null;
@@ -47,7 +44,7 @@ export class student{
         this.crtajStudentHTML(document.getElementById("mainStudent"));
         this.crtajIspite();
         this.crtajZabrane();
-        this.getProsecnaOcena();console.log(this.prosecnaOcena);
+        this.getProsecnaOcena();
     }
     crtajStudentHTML(host) {
       document.getElementById("mainIme").innerHTML=this.indeks+" "+this.ime+" " +this.prezime;

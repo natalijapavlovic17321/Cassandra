@@ -7,8 +7,8 @@ if (
 }
 function prijavljeniIspiti() {
   let tableDiv = document.getElementById("prijavljeni");
-  let header = document.createElement("h4");
-  header.innerHTML = "Prijavljeni Ispiti U OvomRoku";
+  let header = document.createElement("h3");
+  header.innerHTML = "Prijavljeni Ispiti U Ovom Roku";
   tableDiv.appendChild(header);
   let staticInfo = ["Naziv ispita", "Datum", "Vreme", "Sala"];
   let tablica = document.createElement("table");
@@ -78,8 +78,8 @@ function mogucePrijave() {
   tableDiv.appendChild(table);
   let newDiv = document.createElement("div");
   tableDiv.appendChild(newDiv);
-  let header1 = document.createElement("h4");
-  header1.innerHTML = "Ispite koje mozete prijaviti";
+  let header1 = document.createElement("h3");
+  header1.innerHTML = "Ispiti koje mozete prijaviti";
 
   newDiv.appendChild(header1);
   var table1 = document.createElement("table");
@@ -211,6 +211,7 @@ function prijaviIspite() {
   });
   let es = document.getElementById("UkupnoCena");
   es.innerHTML = cena;
+ es.classList.add("uplata");
 }
 
 var dgm = document.getElementById("prijavi");

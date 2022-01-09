@@ -93,7 +93,7 @@ public class StudentController : ControllerBase
             //var localSession = SessionManager.GetSession();
             IMapper mapper = new Mapper(localSession);
 
-            student.Odobren = false;
+            //student.Odobren = false;
             mapper.Insert<Student>(student);
             cluster.Shutdown();
             return Ok();

@@ -63,15 +63,14 @@ public class SaskeController : ControllerBase
             }
             var returnValue = new List<object>();
             
-            foreach (var r in result)
-            {
+
                 foreach (var i in ispiti)
                 { 
                     RowSet ime=localSession.Execute("SELECT  naziv_predmeta FROM predmet WHERE sifra_predmeta='" + i.Sifra_Predmeta + "' ALLOW FILTERING");
                     RowSet ocena=localSession.Execute("SELECT ocena FROM polozeni_ispiti WHERE sifra_predmeta='" + i.Sifra_Predmeta + "' ALLOW FILTERING");
                     returnValue.Add(new { ime, ocena});
                 }
-            }
+            
 
             return new JsonResult(returnValue);
         }
@@ -85,17 +84,42 @@ public class SaskeController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getPolozeniIspitiOcene/{email}")]
-    public IActionResult polozeniIspitiOcene(string email)
+    [Route("getPolozeniIspitiOcene")]
+    public IActionResult polozeniIspitiOcena()
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
-
+        Cassandra.ISession localSession = cluster.Connect("test");
+        IMapper mapper = new Mapper(localSession);
+        var studentEmail = HttpContext.User.Identity!.Name;
         try
         {
-            Cassandra.ISession localSession = cluster.Connect("test");
-            IMapper mapper = new Mapper(localSession);
+            //Cassandra.ISession localSession = cluster.Connect("test");
+            //IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             List<PolozeniIspiti> result =mapper.Fetch<PolozeniIspiti>("WHERE email_studenta=? ALLOW FILTERING",email).ToList();
-            return new JsonResult(result);
+            int? pr=0;
+            int? espb=0;
+            int i=0;
+            List<Predmet> ispiti=mapper.Fetch<Predmet>().ToList();
+            foreach(var r in result)
+            {
+                
+                pr+=r.Ocena;
+                i++;
+                foreach(var pred in ispiti)
+                {
+                    if(pred.Sifra_Predmeta==r.Sifra_Predmeta)
+                    {
+                        espb+=Int32.Parse(pred.Espb);
+                    }
+                }
+
+            }
+            double ocena=(double)pr/i;
+           // object returnValue=new object;
+            object returnValue=new { ocena,espb};
+            return new JsonResult(returnValue);
+
         }
         catch (Exception exc)
         {
@@ -110,42 +134,56 @@ public class SaskeController : ControllerBase
     [Route("getZabrane")]
     public IActionResult zabrane()
     {
-         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
-
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            //IMapper mapper = new Mapper(localSession);
+            IMapper mapper = new Mapper(localSession);
+            List<ZabranjenaPrijava> zabrana= new List<ZabranjenaPrijava>();
             DateTime today = DateTime.Today;
-            var studentEmail = HttpContext.User.Identity!.Name;
+            var email = HttpContext.User.Identity!.Name;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
-            //Student student = mapper.Single<Student>("WHERE email=? ALLOW FILTERING", email);
-            var result = localSession.Execute("SELECT sifra_predmeta FROM zabranjena_prijava WHERE email_student='" +studentEmail  + "' AND datum_isteka>='" + date + "' ALLOW FILTERING");//uzimam predmete gde ima zabranu
-
-            List<String> izbaciPredmete = new List<String>();
-            foreach (var row in result)
+            var result2 = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE email_student='" + email + "' AND datum_isteka>='" + date +"' ALLOW FILTERING");
+            foreach(var arow in result2)
             {
-                izbaciPredmete.Add(row.GetValue<String>("sifra_predmeta"));
+                ZabranjenaPrijava o= new ZabranjenaPrijava();
+                o.Id = arow.GetValue<String>("id");
+                o.Datum_isteka = arow.GetValue<DateTime>("datum_isteka");
+                o.Email_student = arow.GetValue<String>("email_student");
+                o.Sifra_predmeta = arow.GetValue<String>("sifra_predmeta");
+                o.Razlog = arow.GetValue<String>("razlog");
+                if(DateTime.Compare(o.Datum_isteka,DateTime.Now)>=0)
+                zabrana.Add(o);
             }
-            
-            List<Predmet> ispiti= new List<Predmet>();
+            List<Predmet> ispiti =mapper.Fetch<Predmet>().ToList();
             List<Predmet> res= new List<Predmet>();
-            foreach (var p in ispiti)
+            foreach(var i in zabrana)
             {
-                foreach (var i in izbaciPredmete)
+                foreach(var p in ispiti)
                 {
-                    if (p.Sifra_Predmeta == i)
+                    if(i.Sifra_predmeta==p.Sifra_Predmeta)
+                        res.Add(p);
+
+                }
+                
+            }
+            var returnValue = new List<object>();
+            foreach(var r in res)
+            {
+                foreach(var j in zabrana)
+                {
+                    if(r.Sifra_Predmeta==j.Sifra_predmeta)
                     {
-                        Predmet pom= new Predmet();
-                        res.Add(pom);
+                        string naziv=r.NazivPredmeta;
+                        DateTime datumr=j.Datum_isteka;
+                        string raz=j.Razlog;
+                        returnValue.Add(new { naziv,datumr,raz});
                     }
                 }
-
             }
-
-            return new JsonResult(res);
+            return new JsonResult( returnValue);
         }
         catch (Exception exc)
         {

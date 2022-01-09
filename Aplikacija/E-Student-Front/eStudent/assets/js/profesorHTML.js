@@ -17,7 +17,7 @@ else
         d1.addEventListener("click",dodajObavestenje); 
         d2.addEventListener("click",dodajZabranu); 
         d3.addEventListener("click",dodajSalu); 
-        var d5 = document.getElementById("btOPrikaziZabranu");
+        var d5 = document.getElementById("btPrikaziZabranu");
         d5.addEventListener("click",prikaziZabranu);
    // }
     /*else

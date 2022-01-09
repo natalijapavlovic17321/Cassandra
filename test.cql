@@ -142,6 +142,7 @@ CREATE TABLE satnica (
     datum date,
     sifra_predmeta text,
     vreme text,
+	naziv_sale text,
     PRIMARY KEY (id, rok_id)
 ) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
  AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
@@ -206,8 +207,7 @@ insert into "rok"("id","pocetak_roka","kraj_prijave","naziv","pocetak_prijave","
 
 
 // satnica table data.
-insert into "satnica"("id","rok_id","datum","sifra_predmeta","vreme") values('0','0','2022-01-21','A123B','14:00');
-
+insert into "satnica"("id","rok_id","datum","sifra_predmeta","vreme","naziv_sale") values('0','0','2022-01-21','A123B','14:00','525');
 
 // prijave_ispita table data.
 insert into "prijave_ispita"("id","rok_id","dezurni_prof_email","email_studenta","naziv_sale","sifra_predmeta") values('0','0','prof@elfak.rs','culinjo@elfak.rs','NikolaTesla','A234B');
@@ -232,14 +232,3 @@ CREATE TABLE counting_id (
 
 
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('1','2021-01-25','culinjo@elfak.rs','prepisivao','A123B');
-CREATE TABLE mesto_polaganja (
-    id text,
-    sifra_predmeta text,
-    id_rok text,
-    naziv_sale text,
-    PRIMARY KEY (id)
-) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
- AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
- AND compression={'chunk_length_in_kb':'64', 'class':'org.apache.cassandra.io.compress.LZ4Compressor'}
- AND dclocal_read_repair_chance=0.1
- AND speculative_retry='99PERCENTILE';

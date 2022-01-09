@@ -3,5 +3,6 @@ public class Sala
 {
     public String? Naziv { get; set; }
     public int? Sprat { get; set; }
+    public int? Kapacitet {get;set;}
 }
 

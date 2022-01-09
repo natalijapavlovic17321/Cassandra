@@ -1392,3 +1392,14 @@ td, th {
   align-content: space-between;
   margin-top: 30px;
 }
+.horizon{
+  display: flex;
+  margin: 10px;
+  justify-content:space-evenly;
+}
+.horizon2{
+  display: flex;
+}
+.zabraneProf{
+  margin-top: 20px;
+}

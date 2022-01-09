@@ -13,15 +13,14 @@ else
     //}
     
     s.getStudent();
-
-    //var odjaviSeBtn = document.getElementById("btnOdjaviSe");
+    //s.getPolozeneIspite()
+    var odjaviSeBtn = document.getElementById("btnOdjaviSe");
     //odjaviSeBtn.addEventListener("click",odjaviSe());
 
- 
+    function odjaviSe()
+    {
+        console.log("odjavi se");
+        sessionStorage.clear();
+        location.href ="index.html"
+    }
 }
-/*odjaviSe()
-{
-    console.log("odjavi se");
-    sessionStorage.clear();
-    location.href ="index.html"
-}*/

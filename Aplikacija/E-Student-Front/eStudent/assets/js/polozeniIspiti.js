@@ -1,17 +1,13 @@
 //import { student } from "./student";
 export class polozeniIspiti{
-    constructor(id,naziv, ocena, datum){
+    constructor(naziv, ocena){
         this.kont=null;
-        this.id=id;
         this.naziv=naziv;
         this.ocena=ocena;
-        this.datum=datum;
     }
-    dodajPolozeniIspit(id,naziv, ocena, datum){
-        this.id=id;
+    dodajPolozeniIspit(naziv, ocena){
         this.naziv=naziv;
         this.ocena=ocena;
-        this.datum=datum;
     }   
     crtajIspitUser(host1, host){
 /*

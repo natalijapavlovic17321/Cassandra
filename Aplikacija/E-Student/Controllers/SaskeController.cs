@@ -14,8 +14,8 @@ public class SaskeController : ControllerBase
 {
     [HttpGet]
     //[Authorize(Roles = "Student")]
-    [Route("getStudent/{email}")]
-    public IActionResult student(string email)
+    [Route("getStudent")]
+    public IActionResult student()
     {
        // Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
@@ -36,36 +36,23 @@ public class SaskeController : ControllerBase
         finally
         {
             cluster.Shutdown();
-        }/*    Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
-        
-            try
-            {
-                Cassandra.ISession localSession = cluster.Connect("test");
-                IMapper mapper = new Mapper(localSession);
-                Student ucenik=mapper.Single<Student>("WHERE email=?", email);
-                return new JsonResult(ucenik);
-            }
-            catch (Exception exc)
-            {
-                return BadRequest(exc.ToString());
-            }
-            finally
-            {
-                cluster.Shutdown();
-            }*/
+        }
     }
     [HttpGet]
-    [Route("getPolozeniIspiti/{email}")]
-    public IActionResult polozeniIspiti(string email)
+    [Route("getPolozeniIspiti")]
+    public IActionResult polozeniIspiti()
     {
-        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
-
+        //Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var studentEmail = HttpContext.User.Identity!.Name;
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
-            List<PolozeniIspiti> result =mapper.Fetch<PolozeniIspiti>("WHERE email_studenta=? ALLOW FILTERING",email).ToList();
+            List<PolozeniIspiti> result =mapper.Fetch<PolozeniIspiti>("WHERE email_studenta=? ALLOW FILTERING",studentEmail).ToList();
             List<Predmet> ispiti= new List<Predmet>();
             foreach (var row in result)
             {
@@ -80,7 +67,7 @@ public class SaskeController : ControllerBase
             {
                 foreach (var i in ispiti)
                 { 
-                    RowSet ime=localSession.Execute("SELECT sifra_predmeta , naziv_predmeta FROM predmet WHERE sifra_predmeta='" + i.Sifra_Predmeta + "' ALLOW FILTERING");
+                    RowSet ime=localSession.Execute("SELECT  naziv_predmeta FROM predmet WHERE sifra_predmeta='" + i.Sifra_Predmeta + "' ALLOW FILTERING");
                     RowSet ocena=localSession.Execute("SELECT ocena FROM polozeni_ispiti WHERE sifra_predmeta='" + i.Sifra_Predmeta + "' ALLOW FILTERING");
                     returnValue.Add(new { ime, ocena});
                 }
@@ -120,19 +107,22 @@ public class SaskeController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getZabrane/{email}")]
-    public IActionResult zabrane(string email)
+    [Route("getZabrane")]
+    public IActionResult zabrane()
     {
-        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
 
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             //IMapper mapper = new Mapper(localSession);
             DateTime today = DateTime.Today;
+            var studentEmail = HttpContext.User.Identity!.Name;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
             //Student student = mapper.Single<Student>("WHERE email=? ALLOW FILTERING", email);
-            var result = localSession.Execute("SELECT sifra_predmeta FROM zabranjena_prijava WHERE email_student='" + email + "' AND datum_isteka>='" + date + "' ALLOW FILTERING");//uzimam predmete gde ima zabranu
+            var result = localSession.Execute("SELECT sifra_predmeta FROM zabranjena_prijava WHERE email_student='" +studentEmail  + "' AND datum_isteka>='" + date + "' ALLOW FILTERING");//uzimam predmete gde ima zabranu
 
             List<String> izbaciPredmete = new List<String>();
             foreach (var row in result)

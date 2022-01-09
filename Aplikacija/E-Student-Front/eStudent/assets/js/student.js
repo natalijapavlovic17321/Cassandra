@@ -1,15 +1,16 @@
-export {polozeniIspiti} from "./polozeniIspiti.js" //mslm da ide import i da fajl mora sa ekstenzijom .js
+import {polozeniIspiti} from "./polozeniIspiti.js" //mslm da ide import i da fajl mora sa ekstenzijom .js
 export class student{
-    consructor(id, brindeksa,ime,prezime,email,godina,semestar, polozeniIspiti,smer){
+    consructor(id, indeks,ime,prezime,email,godina,semestar,smer){
         this.kontejner=null;
        // this.id = id;
         this.ime = ime;
         this.prezime = prezime;
-        this.brindeksa = brindeksa;
+        this.indeks = indeks;
         this.email = email;
         this.godina = godina;
         this.semestar = semestar;
-        this.polozeniIspiti=polozeniIspiti;
+        this.polozeniIspiti=[];
+        this.zabranjeniIspiti=[];
         this.smer=smer
         //vrtn ce da treba i prijavljeni ispiti 
         // mozda i zabrane
@@ -19,12 +20,13 @@ export class student{
         //this.id = id;
         this.ime = ime;
         this.prezime = prezime;
-        this.brindeksa = brindeksa;
+        this.indeks = indeks;
         this.email = email;
         this.godina = godina;
         this.semestar = semestar;
         this.polozeniIspiti=polozeniIspiti;
-        this.pIspiti=[];
+        this.polozeniIspiti=[];
+        this.zabranjeniIspiti=[];
         this.smer=smer
     }
     crtajStudent(){
@@ -35,6 +37,7 @@ export class student{
 
         this.crtajStudentHTML(document.getElementById("mainStudent"));
         this.crtajIspite(document.getElementById("polozeniIspiti"));
+        this.crtajZabrane(document.getElementById("zabranjeniIspiti"));
     }
     crtajStudentHTML(host) {
         document.getElementById("brindeksaUser").innerHTML = this.username; //nemas username
@@ -42,74 +45,116 @@ export class student{
         document.getElementById("emailUser").innerHTML = this.email;
 
     }
-    crtajIspite(host) {
-        var tableisp=document.getElementById("tablepispiti");
-        const s=document.createElement("td");
-       
-        var table = document.createElement('TABLE');
-        table.border='1';
-
-        var tableBody = document.createElement('TBODY');
-        table.appendChild(tableBody);
-
-        this.pIspiti.forEach(ispit=>{
-            ispit.crtajIspitUser(tableBody, tableisp);
-        })
-        host.appendChild(tableisp);
+    crtajIspite() {
+      var tableDiv = document.getElementById("polozeniIspiti")
+      let header = document.createElement("h2");
+      header.innerHTML = "Položeni ispiti";
+      tableDiv.appendChild(header); 
+      var table = document.createElement("table");
+      var row = table.insertRow();
+      let staticInfo1 = [
+        "NazivIspita",
+        "Ocena",
+      ];
+      row = table.insertRow();
+      for (let i = 0; i < staticInfo1.length; i++) {
+        let cell = row.insertCell();
+        cell.innerHTML = staticInfo1[i];
+      }
+      
+      fetch("https://localhost:7078/Saske/getPolozeniIspiti", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
+      }).then((p) => {
+        p.json().then((data) => {
+          data.forEach((element) => {
+            var p1=new polozeniIspiti(element.ime,element.ocena);
+            var cell;
+            row=table.insertRow();
+            cell=row.insertCell();
+           // p1.naziv=element.ime;
+            cell.innerHTML=element.ime;
+            cell=row.insertCell();
+            //p1.ocena=element.ocena;
+            cell.innerHTML=element.ocena;//console.log(p1);
+            //this.polozeniIspiti.push(p1);
+            //this.dodajPolozeniIspit(p1);
+          });
+          
+        });
+      });tableDiv.appendChild(table);
     }
-    /*getStudent(){
-        console.log(this.email)
-        fetch("https://localhost:7078/Saske/getStudent/"+this.email, {
-            method: "GET",
-            headers: {
-                //"Content-Type": "application/json",
-                //"accept": "text/plain",
-                //"Authorization": "Bearer " + sessionStorage.getItem("token") 
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
-              else {
+    crtajZabrane() {
+      var tableDiv = document.getElementById("polozeniIspiti")
+      let header = document.createElement("h2");
+      header.innerHTML = "Zabranjeni ispiti";
+      tableDiv.appendChild(header); 
+      var table = document.createElement("table");
+      var row = table.insertRow();
+      let staticInfo1 = [
+        "NazivIspita",
+        "Ocena",
+      ];
+      row = table.insertRow();
+      for (let i = 0; i < staticInfo1.length; i++) {
+        let cell = row.insertCell();
+        cell.innerHTML = staticInfo1[i];
+      }
+      
+      fetch("https://localhost:7078/Saske/getZabrane", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
+      }).then((p) => {
+        p.json().then((data) => {
+          data.forEach((element) => {
+            var p1=new polozeniIspiti();
+            var cell;
+            row=table.insertRow();
+            cell=row.insertCell();
+            p1.naziv=element.ime;
+            cell.innerHTML=element.ime;
+            cell=row.insertCell();
+            p1.ocena=element.ocena;
+            cell.innerHTML=element.ocena;console.log(element.ime);
+            //this.dodajZabranjeniIspit(p1);
+          });
+          
+          
+        });
+      });tableDiv.appendChild(table);
+    }
+    dodajPolozeniIspit(ispit) {
+      this.polozeniIspiti.push(ispit);
+    }
+    dodajZabranjeniIspit(ispit) {
+      this.zabranjeniIspiti.push(ispit);
+    }
+        getStudent(){
+          fetch("https://localhost:7078/Saske/getStudent", {
+              method: "GET",
+              headers: {
+                  //"Content-Type": "application/json",
+                  "accept": "text/plain",
+                  "Authorization": "Bearer " + sessionStorage.getItem("token") 
+              },
+          }).then(p => {
+              p.json().then(data => {
                 this.email=data.email;
                 this.ime=data.ime;
                 this.prezime=data.prezime;
-                this.brindeksa = indeks;
-                this.semestar = semestar;
-                this.smer=smer;
+                //this.indeks = indeks;
+                //this.semestar = semestar;
+                //this.smer=smer;
                 this.crtajStudent();
-              }
-            })
-            .catch((error) => console.error("Greska sa prijavljivanjem", error));
-        }*/
-        getStudent()
-        {
-            fetch("https://localhost:7078/Saske/getStudent/"+this.email, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                }),
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
-                  else {
-                    this.email=data.email;
-                    this.ime=data.ime;
-                    this.prezime=data.prezime;
-                    this.brindeksa = indeks;
-                    this.semestar = semestar;
-                    this.smer=smer;
-                    this.crtajStudent();
-                  }
-                })
-                .catch((error) => console.error("Greska sa prijavljivanjem", error));
-        } 
+              });
+          });
+      }
     setEmail(e)
     {
         this.email=e;

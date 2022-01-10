@@ -14,7 +14,7 @@ function Login(usern, pass) {
       console.log(data);
       if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
       else {
-        if (data.odobren == false) {
+        if (data.odobren == false && data.role == "Student") {
           alert("Vas nalog jos uvek nije odobren");
           location.href = "index.html";
           return;

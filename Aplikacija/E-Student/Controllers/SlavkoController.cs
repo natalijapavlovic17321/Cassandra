@@ -108,7 +108,7 @@ public class SlavkoController : ControllerBase
                     satnica.Datum = j.GetValue<DateTime>("datum");
                     satnica.Vreme = j.GetValue<string>("vreme");
                     satnica.Naziv_sale = j.GetValue<string>("naziv_sale");
-                    returnValue.Add(new { Naziv = predmet.NazivPredmeta, Datum = satnica.Datum, Vreme = satnica.Vreme, Sala = satnica.Naziv_sale });
+                    returnValue.Add(new { SifraPredmeta = predmet.Sifra_Predmeta, Naziv = predmet.NazivPredmeta, Datum = satnica.Datum, Vreme = satnica.Vreme, Sala = satnica.Naziv_sale });
                     break;
                 }
             }
@@ -118,6 +118,47 @@ public class SlavkoController : ControllerBase
         catch (Exception exc)
         {
             return BadRequest(exc.Message);
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+
+    }
+    [HttpDelete]
+    [Authorize(Roles = "Student")]
+    [Route("odjaviIspit/{sifraIspita}")]
+    public IActionResult odjaviIspit(string sifraIspita)
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+
+            DateTime today = DateTime.Today;
+            var date = today.Year + "-" + today.Month + "-" + today.Day;
+
+            var result0 = localSession.Execute("SELECT id FROM rok WHERE pocetak_prijave<='" + date + "' " + "AND kraj_prijave>='" + date + "' ALLOW FILTERING");
+            string rokID = "";
+            foreach (var i in result0)
+            {
+                rokID = i.GetValue<string>("id");
+                break;
+            }
+            var d = mapper.Single<PrijaveIspita>("WHERE sifra_predmeta=? AND rok_id=? ALLOW FILTERING", sifraIspita, rokID);
+
+
+            mapper.Delete<PrijaveIspita>(d);
+            return Ok();
+
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
         }
         finally
         {

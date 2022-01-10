@@ -10,7 +10,7 @@ function prijavljeniIspiti() {
   let header = document.createElement("h3");
   header.innerHTML = "Prijavljeni Ispiti U Ovom Roku";
   tableDiv.appendChild(header);
-  let staticInfo = ["Naziv ispita", "Datum", "Vreme", "Sala"];
+  let staticInfo = ["Naziv ispita", "Datum", "Vreme", "Sala", ""];
   let tablica = document.createElement("table");
   tablica.id = "tablicaPrijavljeni";
   let row = tablica.insertRow();
@@ -27,6 +27,7 @@ function prijavljeniIspiti() {
   }).then((p) => {
     p.json().then((data) => {
       data.forEach((element) => {
+        console.log(element);
         row = tablica.insertRow();
         let cell = row.insertCell();
         cell.innerHTML = element.naziv;
@@ -41,25 +42,54 @@ function prijavljeniIspiti() {
         if (
           element.sala == null ||
           element.sala == "" ||
-          element.sala == "null"
+          element.sala == "null" ||
+          element.sala == "tbd"
         ) {
           cell.innerHTML = "Jos uvek nije odluceno";
         } else {
           cell.innerHTML = element.sala;
         }
+        cell = row.insertCell();
+        let btn = document.createElement("button");
+        btn.innerHTML = "Odjavi";
+        btn.id = element.sifraPredmeta;
+        btn.classList = "btn btn-a";
+        btn.addEventListener("click", function () {
+          odjaviIspit(btn.id);
+        });
+        cell.appendChild(btn);
       });
     });
   });
 
   tableDiv.appendChild(tablica);
-  fetch;
+}
+function odjaviIspit(idd) {
+  fetch("https://localhost:7078/Slavko/odjaviIspit/" + idd, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
+    },
+    body: JSON.stringify({}),
+  })
+    .then((p) => {
+      if (p.ok) {
+        alert("Uspesno odjava");
+      } else {
+        alert("Greska kod odjave");
+      }
+    })
+    .catch((p) => {
+      alert("Greška sa konekcijom.");
+    });
 }
 prijavljeniIspiti();
 mogucePrijave();
 function mogucePrijave() {
   var tableDiv = document.getElementById("rokInfo");
-  let header = document.createElement("h4");
-  header.innerHTML = "Tekuci ispitni rok";
+  let header = document.createElement("h3");
+  header.innerHTML = "Tekuci ispitni asdasdrok";
   tableDiv.appendChild(header);
   var table = document.createElement("table");
   var row = table.insertRow();
@@ -106,10 +136,9 @@ function mogucePrijave() {
     },
   }).then((p) => {
     p.json().then((data) => {
-      if (data == null) {
+      if (data.rok.naziv == null) {
         alert("Trenutno ne postoji rok");
-        location.href("student.html");
-        return;
+        location.href = "student.html";
       }
 
       row = table.insertRow();
@@ -206,12 +235,14 @@ function prijaviIspite() {
       cell.innerHTML = wholeRow.cells[3].innerHTML;
       cell = row.insertCell();
       cell.innerHTML = wholeRow.cells[4].innerHTML;
+      cell = row.insertCell();
+      cell.innerHTML = "Jos uvek nije odluceno";
       wholeRow.parentNode.removeChild(wholeRow);
     }
   });
   let es = document.getElementById("UkupnoCena");
   es.innerHTML = cena;
- es.classList.add("uplata");
+  es.classList.add("uplata");
 }
 
 var dgm = document.getElementById("prijavi");

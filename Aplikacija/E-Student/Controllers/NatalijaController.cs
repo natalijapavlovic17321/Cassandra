@@ -387,12 +387,18 @@ public class NatalijaController : ControllerBase
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
 
-
             var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
             string rokID = "";
             foreach (var i in result)
             {
                 rokID = i.GetValue<string>("id");
+                break;
+            }
+            var free = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
+            foreach (var i in free)
+            {
+                if(i.GetValue<string>("naziv_sale")!="tbd")
+                   return BadRequest("Vec je rezervisana sala");
                 break;
             }
             var zauzete = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "'  ALLOW FILTERING");
@@ -410,118 +416,25 @@ public class NatalijaController : ControllerBase
             var slovodneSale = new List<Sala>(sveSale);
 
             Int64 br = 0;
-            //prebroji sve studente
             RowSet broj = localSession.Execute("SELECT COUNT(*) FROM prijave_ispita WHERE sifra_predmeta='" + sifra + "' AND rok_id='" + rokID + "'ALLOW FILTERING");
             foreach (var b in broj)
             {
                 br = b.GetValue<Int64>("count");
                 break;
             }
-
-
             foreach (var i in sveSale)
             {
                 foreach (var j in zauzeteSale)
                 {
-                    if (i.Naziv == j || i.Kapacitet < br)
+                    if (i.Naziv == j )
                     {
                         slovodneSale.Remove(i);
                     }
                 }
+                if(i.Kapacitet<br)
+                  slovodneSale.Remove(i);
             }
-
             return new JsonResult(slovodneSale);
-
-        }
-        catch (Exception exc)
-        {
-            return BadRequest(exc.ToString());
-        }
-        finally
-        {
-            cluster.Shutdown();
-        }
-    }
-
-
-
-    [HttpGet]
-    [Route("getSlobodneSale/{sifra}")]
-    public IActionResult SlobodneSale(string sifra) //preuzimanje info o svim slobodnim salama koje odg broju prijava
-    {
-        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
-        definitions.Define(new DateCodec());
-        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
-        try
-        {
-
-            Cassandra.ISession localSession = cluster.Connect("test");
-            IMapper mapper = new Mapper(localSession);
-            DateTime today = DateTime.Today;
-            var date = today.Year + "-" + today.Month + "-" + today.Day;
-            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
-            string rokID = "";
-            foreach (var i in result)
-            {
-                rokID = i.GetValue<string>("id");
-                break;
-            }
-            //prvo ispitivanje da li je vec zauzeta sala za taj ispit
-            var free = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
-            foreach (var i in free)
-            {
-                //if(i.GetValue<String>("naziv_sale")!=null)
-                // return BadRequest(400);
-                break;
-            }
-            var zauzete = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' ALLOW FILTERING");//sve mpguce sale
-            Int64 br = 0;
-            //prebroji sve studente
-            RowSet broj = localSession.Execute("SELECT COUNT(*) FROM prijave_ispita WHERE sifra_predmeta='" + sifra + "' AND rok_id='" + "'ALLOW FILTERING");
-            foreach (var b in broj)
-            {
-                br = b.GetValue<Int64>("count");
-                break;
-            }
-            List<Sala> sale = mapper.Fetch<Sala>().ToList();
-            List<Sala> slobodne = new List<Sala>();
-            int j = 0;
-            foreach (var b in broj)
-            {
-                j++;
-                break;
-            }
-            if (j > 0)
-            {
-                j = 0;
-                foreach (var s in sale)
-                {
-                    foreach (var z in zauzete)
-                    {
-                        var nazi = z.GetValue<String>("naziv_sale");
-                        if (nazi == s.Naziv)
-                            j++;
-                    }
-                    if (j == 0)
-                        slobodne.Add(s);
-                    j = 0;
-                }
-            }
-            else
-            {
-                slobodne = sale; //sve su slobodne
-            }
-            List<Sala> pom = new List<Sala>();
-            foreach (Sala s in slobodne)
-            {
-                if (s.Kapacitet >= br)
-                    pom.Add(s); //svi koji odg kapacitetu
-            }
-            //da se izracuna koja sala
-            //i vrati ona
-            //ili sve sale pa nek bira korisnik
-            //int lowest_price = pom.Min(c => c.Kapacitet);
-            return new JsonResult(zauzete);
         }
         catch (Exception exc)
         {
@@ -560,7 +473,7 @@ public class NatalijaController : ControllerBase
                 var sat = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + row.Sifra_predmeta + "' ALLOW FILTERING");
                 foreach (var i in sat)
                 {
-                    if (i.GetValue<String>("naziv_sale") == null || i.GetValue<String>("naziv_sale") == "")
+                    if (i.GetValue<String>("naziv_sale") == "tbd" || i.GetValue<String>("naziv_sale") == "")
                     {
                         p = mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
                         ispiti.Add(p);

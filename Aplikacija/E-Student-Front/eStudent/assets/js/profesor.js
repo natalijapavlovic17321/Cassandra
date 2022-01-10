@@ -354,12 +354,66 @@ export class profesor{
       var l=document.createElement("label");
       l.innerHTML="Sala:";
       d5.appendChild(l);
-      this.preuzmiSale();
+      sel.addEventListener('change', (e) => {
+        this.preuzmiSale(document.getElementById("selectID").value);
+      });
+      var d5=document.getElementById("divGdeSeRadiSve");
+      var divs=document.createElement("div");
+      divs.id="crtanjeTabeleMesta";
+      d5.appendChild(divs);
+      this.preuzmiSale(document.getElementById("selectID").value);
     }
     crtajSale()
     {
-      var d5=document.getElementById("divGdeSeRadiSve");
-      //tabela il nesto
+      var d5=document.getElementById("crtanjeTabeleMesta");
+      d5.innerHTML="";
+      var table1 = document.createElement("table");
+      table1.id = "mestoProf";
+      table1.className="mestoProf"
+      var row1 = table1.insertRow();
+      let staticInfo = [
+        " ",
+        "Naziv",
+        "Kapacitet",
+        "Sprat",
+        ""
+      ];
+      row1 = table1.insertRow();
+      for (let i = 0; i < staticInfo.length; i++) {
+        let cell = row1.insertCell();
+        cell.innerHTML = staticInfo[i];
+      }
+      var j=0;
+      this.sala.forEach(i=>{
+        row1 = table1.insertRow();
+        row1.id = i.naziv;
+        var cell1;
+        cell1 = row1.insertCell();
+        cell1.innerHTML = j+1;
+
+        cell1 = row1.insertCell();
+        cell1.innerHTML = i.naziv;
+
+        cell1 = row1.insertCell();
+        cell1.innerHTML = i.kapacitet;
+
+        cell1 = row1.insertCell();
+        cell1.innerHTML = i.sprat;
+
+        cell1 = row1.insertCell();
+        var dugme=document.createElement("button");
+        dugme.innerHTML="Rezervisi";
+        dugme.id=i.naziv;
+        cell1.appendChild(dugme);
+        dugme.addEventListener("click", (e) => {
+          this.fetchMesto(i.naziv);
+          var d=document.getElementById("divGdeSeRadiSve");
+          d.innerHTML="";
+          this.crtajMesto();
+        });
+        j++;
+      });
+      d5.appendChild(table1);
     }
     getProfesor()
     {
@@ -381,7 +435,7 @@ export class profesor{
                 this.crtajProfesorHTML(document.getElementById("mainProfesor"));
               }
             })
-            .catch((error) => console.error("Greska sa prijavljivanjem", error));
+            .catch((error) => console.error("Greska", error));
     }
     PreuzmiIspite()
     {
@@ -403,7 +457,7 @@ export class profesor{
                 this.crtajIspite(document.getElementById("crtajPredmeteprofesora"));
               }
             })
-            .catch((error) => console.error("Greska sa prijavljivanjem", error));
+            .catch((error) => console.error("Greska", error));
     }
     dodajObavestenjeFetch()
     {
@@ -462,7 +516,7 @@ export class profesor{
                 this.crtajDodavanjeObavestenja();
               }
             })
-            .catch((error) => console.error("Greska sa prijavljivanjem", error));
+            .catch((error) => console.error("Greska", error));
     }
     dodajZabrana()
     {
@@ -483,7 +537,7 @@ export class profesor{
                 this.crtajDodavanjeZabrane();
               }
             })
-            .catch((error) => console.error("Greska sa prijavljivanjem", error));
+            .catch((error) => console.error("Greska", error));
     }
     dodajZabranaFetch()
     {
@@ -509,7 +563,7 @@ export class profesor{
       })
         .then((p) => {
           if (p.ok) {
-            alert("Uspesno dodavanje obavestenja");
+            alert("Uspesno dodavanje zabrane");
           } else {
             alert("Greska kod dodavanja");
           }
@@ -539,7 +593,7 @@ export class profesor{
               this.crtajZabranu();
             }
           })
-          .catch((error) => console.error("Greska sa prijavljivanjem", error));
+          .catch((error) => console.error("Greska", error));
     }
     dodajMesto()
     {
@@ -561,12 +615,12 @@ export class profesor{
               this.crtajMesto();
             }
           })
-          .catch((error) => console.error("Greska sa prijavljivanjem", error));
+          .catch((error) => console.error("Greska", error));
     }
     preuzmiSale(sifra)
     {
-      this.ispiti.length=0;
-      fetch("https://localhost:7078/Natalija/getSlobodneSale/"+sifra, {
+      this.sala.length=0;
+      fetch("https://localhost:7078/Natalija/getSSala/"+sifra, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -580,17 +634,17 @@ export class profesor{
                 var p1 = new sala(element.naziv, element.kapacitet,element.sprat);
                 this.dodajSalu(p1);
               });
+              console.log(this.sala);
               this.crtajSale();
             }
           })
-          .catch((error) => console.error("Greska sa prijavljivanjem", error));
+          .catch((error) => console.error("Greska", error));
     }
-    fetchMesto()
+    fetchMesto(naziv)
     {
       {
-        var naziv //izracunati
         var sifra=document.getElementById("selectID").value;
-        if(tekst!="")
+        if(naziv!="")
         {
         fetch("https://localhost:7078/Natalija/updateSatnica/"+sifra, {
           method: "PUT",
@@ -609,7 +663,7 @@ export class profesor{
         })
           .then((p) => {
             if (p.ok) {
-              alert("Uspesno dodavanje obavestenja");
+              alert("Uspesno rezervisanje");
             } else {
               alert("Greska kod dodavanja");
             }

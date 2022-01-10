@@ -75,5 +75,12 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Pocetak_prijave)
         .Column(x => x.Zavrsetak_roka);
 
+        For<Satnica>().TableName("satnica").PartitionKey(x => x.Id)
+        .Column(x => x.Rok_id)
+        .Column(x => x.Datum)
+        .Column(x => x.Naziv_sale)
+        .Column(x => x.Sifra_predmeta)
+        .Column(x => x.Vreme);
+
     }
 }

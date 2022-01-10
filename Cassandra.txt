@@ -28,7 +28,7 @@ Tabele:
 Administrator: Matee
 		odobravanje profila koji se registruju
 		pravljenje naloga profesorima
-		CRUD predmeta,smerova,sala, mesta, satnica
+		CRUD predmeta,smerova,sala, satnica
 		dodavanje novog roka
 		CRUD smera korisnika
 Student:slav,sask

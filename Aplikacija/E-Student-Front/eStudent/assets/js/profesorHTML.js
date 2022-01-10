@@ -1,16 +1,16 @@
 import {profesor} from "./profesor.js";
 var p=new profesor();
-/*if ( sessionStorage.getItem("token") == null || sessionStorage.getItem("token") == "")  //mslm da treba local ?
+if ( sessionStorage.getItem("token") == null || sessionStorage.getItem("token") == "")  
 {
   alert("Niste prijavljeni");
   location.href = "index.html";
 } 
 else 
-{*/
-    //if(sessionStorage.getItem("role")=="Profesor")
-    //{
-        //p.setEmail(sessionStorage.getItem("username"));
-        p.setEmail("prof@elfak.rs");
+{
+    if(sessionStorage.getItem("role")=="Profesor")
+    {
+        p.setEmail(sessionStorage.getItem("username"));
+        //p.setEmail("prof@elfak.rs");
         var d1 = document.getElementById("btnDodajObavestenje");
         var d2 = document.getElementById("btnDodajZabranu");
         var d3 = document.getElementById("btnDodajSalu");
@@ -19,17 +19,17 @@ else
         d3.addEventListener("click",dodajSalu); 
         var d5 = document.getElementById("btPrikaziZabranu");
         d5.addEventListener("click",prikaziZabranu);
-   // }
-    /*else
+    }
+    else
     {
-        //p.setEmail(sessionStorage.getItem("username")); za email tog provesora zavisi kod podesavnja
+        p.setEmail(sessionStorage.getItem("email_profesor")); 
         var d = document.getElementById("radnjeProfesora");
         d.hidden=true;
-    }*/
+    }
     p.getProfesor();
     var d4 = document.getElementById('btnPrikaziPredmete');
     d4.addEventListener("click",preuzmiIspite); 
-//}
+}
 function preuzmiIspite()
 {
     p.PreuzmiIspite();

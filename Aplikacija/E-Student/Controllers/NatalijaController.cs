@@ -14,8 +14,9 @@ namespace E_Student.Controllers;
 public class NatalijaController : ControllerBase
 {
     [HttpGet]
-    [Route("getProfesor/{email}")]
-    public IActionResult profesor(string email) //preuzimanje info o profesoru
+    [Authorize(Roles = "Profesor")]
+    [Route("getProfesor")]
+    public IActionResult profesor() //preuzimanje info o profesoru
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -23,6 +24,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             Profesor prof = mapper.Single<Profesor>("WHERE email=?", email);
             return new JsonResult(prof);
         }
@@ -36,8 +38,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getProfesorIspiti/{email}")]
-    public IActionResult profesorIspiti(string email) //preuzimanje info o predmetima nekog profesora
+    [Authorize(Roles = "Profesor")]
+    [Route("getProfesorIspiti")]
+    public IActionResult profesorIspiti() //preuzimanje info o predmetima nekog profesora
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -45,6 +48,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
             List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
             List<Predmet> ispiti = new List<Predmet>();
@@ -67,8 +71,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getAllAboutProfesor/{email}")]
-    public IActionResult getAllAboutProfesor(string email) //preuzimanje info o predmetima nekog profesora i info
+    [Authorize(Roles = "Profesor")]
+    [Route("getAllAboutProfesor")]
+    public IActionResult getAllAboutProfesor() //preuzimanje info o predmetima nekog profesora i info
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -76,6 +81,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             Profesor prof = mapper.Single<Profesor>("WHERE email=?", email);
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
             List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
@@ -103,8 +109,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getProfesorIspitiNazivi/{email}")]
-    public IActionResult profesorNazivi(string email) //preuzimanje info o predmetima nekog profesora
+    [Authorize(Roles = "Profesor")]
+    [Route("getProfesorIspitiNazivi")]
+    public IActionResult profesorNazivi() //preuzimanje info o predmetima nekog profesora
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -112,6 +119,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
             List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
             List<String> ispiti = new List<String>();
@@ -132,8 +140,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getObavestenjaProfesora/{email}")]
-    public IActionResult ObavestenjaProfesora(string email) //preuzimanje info o obavestenjima nekog profesora
+    [Authorize(Roles = "Profesor")]
+    [Route("getObavestenjaProfesora")]
+    public IActionResult ObavestenjaProfesora() //preuzimanje info o obavestenjima nekog profesora
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
@@ -143,6 +152,7 @@ public class NatalijaController : ControllerBase
 
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             var result = localSession.Execute("SELECT * FROM obavestenje WHERE email_profesor='" + email + "' ALLOW FILTERING");
             List<Obavestenje> obavestenja = new List<Obavestenje>();
             foreach (var row in result)
@@ -167,6 +177,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = "Profesor")]
     [Route("getObavestenja")]
     public IActionResult Obavestenja() //preuzimanje info o svim obavestenjima 
     {
@@ -202,6 +213,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = "Profesor")]
     [Route("getObavestenjaPredmeta/{sifra}")]
     public IActionResult ObavestenjaPredmeta(string sifra) //preuzimanje info o svim obavestenjima Predeta
     {
@@ -237,8 +249,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getZabrana/{email}")]
-    public IActionResult ZabraneProfesora(string email) //preuzimanje info o svim zabranama s kojima profesor moze da barata
+    [Authorize(Roles = "Profesor")]
+    [Route("getZabrana")]
+    public IActionResult ZabraneProfesora() //preuzimanje info o svim zabranama s kojima profesor moze da barata
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
@@ -247,6 +260,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
             List<ZabranjenaPrijava> zabrana = new List<ZabranjenaPrijava>();
             DateTime today = DateTime.Today;
@@ -278,6 +292,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpPost]
+    [Authorize(Roles = "Profesor")]
     [Route("postObavestenje")]
     public IActionResult postObavestenje([FromBody] Obavestenje obavestenje) //postavljanje obavestenja
     {
@@ -316,6 +331,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpPost]
+    [Authorize(Roles = "Profesor")]
     [Route("postZabrana")]
     public IActionResult postZabrana([FromBody] ZabranjenaPrijava zabrana) //postavljanje zabrane studentu
     {
@@ -353,6 +369,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpDelete]
+    [Authorize(Roles = "Profesor")]
     [Route("deleteZabrana/{id}")]
     public IActionResult DeleteZabrana(string id)
     {
@@ -374,6 +391,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = "Profesor")]
     [Route("getSSala/{sifra}")]
     public IActionResult SlobSale(string sifra)
     {
@@ -446,8 +464,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getIspitiZaSalu/{email}")]
-    public IActionResult ispitiZaSalu(string email) //svi ispiti za koje sale jos nisu zauzete
+    [Authorize(Roles = "Profesor")]
+    [Route("getIspitiZaSalu")]
+    public IActionResult ispitiZaSalu() //svi ispiti za koje sale jos nisu zauzete
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -455,6 +474,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
             var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
@@ -492,8 +512,9 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpPut]
-    [Route("updateSatnica/{sifra}")]
-    public IActionResult updateSatnica(string sifra, [FromBody] Satnica satnica)
+    [Authorize(Roles = "Profesor")]
+    [Route("updateSatnica/{sifra}/{naziv}")]
+    public IActionResult updateSatnica(string sifra,string naziv)
     {
         try
         {
@@ -509,7 +530,7 @@ public class NatalijaController : ControllerBase
                 rokID = i.GetValue<string>("id");
                 break;
             }
-            Sala sale = mapper.Single<Sala>("WHERE naziv=? ALLOW FILTERING", satnica.Naziv_sale);
+            Sala sale = mapper.Single<Sala>("WHERE naziv=? ALLOW FILTERING", naziv);
             var sat = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
             string satnicaID = "";
             foreach (var i in sat)
@@ -517,7 +538,7 @@ public class NatalijaController : ControllerBase
                 satnicaID = i.GetValue<string>("id");
                 break;
             }
-            var inc = localSession.Execute("UPDATE satnica SET naziv_sale='" + satnica.Naziv_sale + "' WHERE id='" + satnicaID + "' AND rok_id='" + rokID + "'");
+            var inc = localSession.Execute("UPDATE satnica SET naziv_sale='" + naziv + "' WHERE id='" + satnicaID + "' AND rok_id='" + rokID + "'");
             cluster.Shutdown();
             return Ok();
         }

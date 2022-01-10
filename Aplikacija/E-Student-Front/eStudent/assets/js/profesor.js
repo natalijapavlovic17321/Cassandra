@@ -297,7 +297,7 @@ export class profesor{
         cell1.appendChild(dugme);
         //cell1.innerHTML = i.smer;
         dugme.addEventListener("click", (e) => {
-          this.obrisiJednuZabranu(i.id);   ///ovo fali
+          this.obrisiJednuZabranu(i.id);  
         });*/
         j++;
       });
@@ -417,10 +417,11 @@ export class profesor{
     }
     getProfesor()
     {
-        fetch("https://localhost:7078/Natalija/getProfesor/"+this.email, {
+        fetch("https://localhost:7078/Natalija/getProfesor", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Bearer " + sessionStorage.getItem("token")
             }
           })
             .then((response) => response.json())
@@ -440,10 +441,11 @@ export class profesor{
     PreuzmiIspite()
     {
         this.ispiti.length=0;
-        fetch("https://localhost:7078/Natalija/getProfesorIspiti/"+this.email, {
+        fetch("https://localhost:7078/Natalija/getProfesorIspiti", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+               Authorization: "Bearer " + sessionStorage.getItem("token")
             }
           })
             .then((response) => response.json())
@@ -474,7 +476,7 @@ export class profesor{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + sessionStorage.getItem("token"),
+          Authorization: "Bearer " + sessionStorage.getItem("token")
         },
         body: JSON.stringify({
           id_obavestenja: "string",
@@ -500,10 +502,11 @@ export class profesor{
     dodajObavestenje()
     {
       this.ispiti.length=0;
-      fetch("https://localhost:7078/Natalija/getProfesorIspitiNazivi/"+this.email, {
+      fetch("https://localhost:7078/Natalija/getProfesorIspitiNazivi", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Bearer " + sessionStorage.getItem("token")
             }
           })
             .then((response) => response.json())
@@ -521,10 +524,11 @@ export class profesor{
     dodajZabrana()
     {
       this.ispiti.length=0;
-      fetch("https://localhost:7078/Natalija/getProfesorIspitiNazivi/"+this.email, {
+      fetch("https://localhost:7078/Natalija/getProfesorIspitiNazivi", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Bearer " + sessionStorage.getItem("token")
             }
           })
             .then((response) => response.json())
@@ -551,7 +555,7 @@ export class profesor{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          //Authorization: "Bearer " + sessionStorage.getItem("token"),
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
         },
         body: JSON.stringify({
           id: "string",
@@ -576,10 +580,11 @@ export class profesor{
     }
     prikaziZabrana(){
       this.zabrane.length=0;
-      fetch("https://localhost:7078/Natalija/getZabrana/"+this.email, {
+      fetch("https://localhost:7078/Natalija/getZabrana", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + sessionStorage.getItem("token")
           }
         })
           .then((response) => response.json())
@@ -598,10 +603,11 @@ export class profesor{
     dodajMesto()
     {
       this.ispiti.length=0;
-      fetch("https://localhost:7078/Natalija/getIspitiZaSalu/"+this.email, {
+      fetch("https://localhost:7078/Natalija/getIspitiZaSalu", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + sessionStorage.getItem("token")
           }
         })
           .then((response) => response.json())
@@ -624,6 +630,7 @@ export class profesor{
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + sessionStorage.getItem("token")
           }
         })
           .then((response) => response.json())
@@ -646,24 +653,22 @@ export class profesor{
         var sifra=document.getElementById("selectID").value;
         if(naziv!="")
         {
-        fetch("https://localhost:7078/Natalija/updateSatnica/"+sifra, {
+        fetch("https://localhost:7078/Natalija/updateSatnica/"+sifra+"/"+naziv, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + sessionStorage.getItem("token"),
           },
           body: JSON.stringify({
-            id: "string",
-            rok_id: "string",
-            datum: "2022-01-10T01:11:14.421Z",
-            sifra_predmeta: "string",
-            vreme: "string",
-            naziv_sale: naziv
+            
           }),
         })
           .then((p) => {
             if (p.ok) {
               alert("Uspesno rezervisanje");
+              var d5=document.getElementById("divGdeSeRadiSve");
+              d5.innerHTML="";
+              this.crtajMesto();
             } else {
               alert("Greska kod dodavanja");
             }

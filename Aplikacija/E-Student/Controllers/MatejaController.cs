@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Cassandra.Mapping;
 using Cassandra.Serialization;
 using E_Student.Converters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Student.Controllers;
 
@@ -138,8 +139,8 @@ public class MatejaController : ControllerBase
     }
 
     [HttpPut]
-    [Route("updatePredmet/{sifra}/{naziv}/{espb}/{semestar}/{smer}")]
-    public IActionResult UpdatePredmet(string sifra, string naziv, string espb, string semestar, string smer)
+    [Route("updatePredmet")]
+    public IActionResult UpdatePredmet([FromBody] Predmet predmet)
     {
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
@@ -147,12 +148,6 @@ public class MatejaController : ControllerBase
         {        
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-
-            Predmet predmet = mapper.Single<Predmet>("WHERE sifra_predmeta=?", sifra);
-            predmet.NazivPredmeta = naziv;
-            predmet.Espb = espb;
-            predmet.Semestar = semestar;
-            predmet.Smer = smer;
 
             mapper.Update<Predmet>(predmet);
             return Ok();
@@ -248,7 +243,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Profesor")]
     [HttpPost]
     [Route("addSatnica")]
     public IActionResult AddSatnica([FromBody] Satnica satnica)
@@ -263,11 +258,6 @@ public class MatejaController : ControllerBase
             IMapper mapper = new Mapper(localSession);
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='satnica' ALLOW FILTERING").First();
             Satnica provera = new Satnica();
-            var result = localSession.Execute("SELECT sifra_predmeta FROM satnica WHERE sifra_predmeta='" + satnica.Sifra_predmeta + "' ALLOW FILTERING");
-            foreach (var p in result)
-            {
-                provera.Sifra_predmeta = p.GetValue<String>("sifra_predmeta");
-            }
             var proveraDatuma = localSession.Execute("SELECT * FROM rok");
             bool t = false;
             foreach (var p in proveraDatuma)
@@ -282,11 +272,16 @@ public class MatejaController : ControllerBase
                     t = true;
                 }
             }
-            var proveraSale = localSession.Execute("SELECT naziv FROM sala WHERE naziv='" + satnica.Naziv_sale + "' ALLOW FILTERING");
-            foreach (var p in proveraSale)
+            var result = localSession.Execute("SELECT rok_id FROM satnica WHERE rok_id='" + satnica.Rok_id + "' AND sifra_predmeta='" + satnica.Sifra_predmeta +"' ALLOW FILTERING");
+            foreach (var p in result)
             {
-                provera.Naziv_sale = p.GetValue<String>("naziv");
+                provera.Rok_id = p.GetValue<String>("rok_id");
             }
+         //   var proveraSale = localSession.Execute("SELECT naziv FROM sala WHERE naziv='" + satnica.Naziv_sale + "' ALLOW FILTERING");
+         //   foreach (var p in proveraSale)
+          //  {
+          //      provera.Naziv_sale = p.GetValue<String>("naziv");
+         //   }
             var proveraSifrePredmeta = localSession.Execute("SELECT sifra_predmeta FROM predmet WHERE sifra_predmeta='" + satnica.Sifra_predmeta + "' ALLOW FILTERING");
             Satnica proveraSifre = new Satnica();
             foreach (var p in proveraSifrePredmeta)
@@ -294,8 +289,9 @@ public class MatejaController : ControllerBase
                 proveraSifre.Sifra_predmeta = p.GetValue<String>("sifra_predmeta");
             }
             satnica.Id=id.GetValue<String>("counting");
-            if(satnica != null && provera.Sifra_predmeta == null && t == true && provera.Naziv_sale != null && proveraSifre.Sifra_predmeta != null)
+            if(satnica != null && provera.Rok_id == null && t == true && proveraSifre.Sifra_predmeta != null)
             {
+                satnica.Naziv_sale = "tbd";
                 mapper.Insert<Satnica>(satnica);
                 string noviID=(Int32.Parse(satnica.Id)+1).ToString();
                 var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='satnica'");

@@ -23,7 +23,7 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            Profesor prof=mapper.Single<Profesor>("WHERE email=?", email);
+            Profesor prof = mapper.Single<Profesor>("WHERE email=?", email);
             return new JsonResult(prof);
         }
         catch (Exception exc)
@@ -46,12 +46,12 @@ public class NatalijaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
-            List<PredajePredmet> result =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
-            List<Predmet> ispiti= new List<Predmet>();
+            List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
+            List<Predmet> ispiti = new List<Predmet>();
             foreach (var row in result)
             {
-                Predmet p= new Predmet();
-                p= mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
+                Predmet p = new Predmet();
+                p = mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
                 //row.GetValue<String>("sifra_predmeta"));
                 ispiti.Add(p);
             }
@@ -76,18 +76,19 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            Profesor prof=mapper.Single<Profesor>("WHERE email=?", email);
+            Profesor prof = mapper.Single<Profesor>("WHERE email=?", email);
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
-            List<PredajePredmet> result =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
-            List<Predmet> ispiti= new List<Predmet>();
+            List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
+            List<Predmet> ispiti = new List<Predmet>();
             foreach (var row in result)
             {
-                Predmet p= new Predmet();
-                p= mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
+                Predmet p = new Predmet();
+                p = mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
                 //row.GetValue<String>("sifra_predmeta"));
                 ispiti.Add(p);
             }
-            return new JsonResult(new {
+            return new JsonResult(new
+            {
                 Profesor = prof,
                 Ispiti = ispiti
             });
@@ -101,7 +102,7 @@ public class NatalijaController : ControllerBase
             cluster.Shutdown();
         }
     }
-      [HttpGet]
+    [HttpGet]
     [Route("getProfesorIspitiNazivi/{email}")]
     public IActionResult profesorNazivi(string email) //preuzimanje info o predmetima nekog profesora
     {
@@ -112,11 +113,11 @@ public class NatalijaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             //var result = localSession.Execute("SELECT * FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING");
-            List<PredajePredmet> result =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
-            List<String> ispiti= new List<String>();
+            List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
+            List<String> ispiti = new List<String>();
             foreach (var row in result)
             {
-                if(row.Sifra_predmeta!=null)
+                if (row.Sifra_predmeta != null)
                     ispiti.Add(row.Sifra_predmeta);
             }
             return new JsonResult(ispiti);
@@ -143,10 +144,10 @@ public class NatalijaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             var result = localSession.Execute("SELECT * FROM obavestenje WHERE email_profesor='" + email + "' ALLOW FILTERING");
-            List<Obavestenje> obavestenja= new List<Obavestenje>();
+            List<Obavestenje> obavestenja = new List<Obavestenje>();
             foreach (var row in result)
             {
-                Obavestenje o= new Obavestenje();
+                Obavestenje o = new Obavestenje();
                 o.Id_obavestenja = row.GetValue<String>("id_obavestenja");
                 o.Datum_objave = row.GetValue<DateTime>("datum_objave");
                 o.Email_profesor = row.GetValue<String>("email_profesor");
@@ -177,11 +178,11 @@ public class NatalijaController : ControllerBase
 
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            var result = localSession.Execute("SELECT * FROM obavestenje "+ " ALLOW FILTERING");
-            List<Obavestenje> obavestenja= new List<Obavestenje>();
+            var result = localSession.Execute("SELECT * FROM obavestenje " + " ALLOW FILTERING");
+            List<Obavestenje> obavestenja = new List<Obavestenje>();
             foreach (var row in result)
             {
-                Obavestenje o= new Obavestenje();
+                Obavestenje o = new Obavestenje();
                 o.Id_obavestenja = row.GetValue<String>("id_obavestenja");
                 o.Datum_objave = row.GetValue<DateTime>("datum_objave");
                 o.Email_profesor = row.GetValue<String>("email_profesor");
@@ -213,10 +214,10 @@ public class NatalijaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             var result = localSession.Execute("SELECT * FROM obavestenje WHERE sifra_predmeta='" + sifra + "' ALLOW FILTERING");
-            List<Obavestenje> obavestenja= new List<Obavestenje>();
+            List<Obavestenje> obavestenja = new List<Obavestenje>();
             foreach (var row in result)
             {
-                Obavestenje o= new Obavestenje();
+                Obavestenje o = new Obavestenje();
                 o.Id_obavestenja = row.GetValue<String>("id_obavestenja");
                 o.Datum_objave = row.GetValue<DateTime>("datum_objave");
                 o.Email_profesor = row.GetValue<String>("email_profesor");
@@ -246,16 +247,16 @@ public class NatalijaController : ControllerBase
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            List<PredajePredmet> result =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
-            List<ZabranjenaPrijava> zabrana= new List<ZabranjenaPrijava>();
+            List<PredajePredmet> result = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
+            List<ZabranjenaPrijava> zabrana = new List<ZabranjenaPrijava>();
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
             foreach (var row in result)
             {
-                var result2 = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='" + row.Sifra_predmeta + "' AND datum_isteka>='"+date+"' ALLOW FILTERING");
-                foreach(var arow in result2)
+                var result2 = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='" + row.Sifra_predmeta + "' AND datum_isteka>='" + date + "' ALLOW FILTERING");
+                foreach (var arow in result2)
                 {
-                    ZabranjenaPrijava o= new ZabranjenaPrijava();
+                    ZabranjenaPrijava o = new ZabranjenaPrijava();
                     o.Id = arow.GetValue<String>("id");
                     o.Datum_isteka = arow.GetValue<DateTime>("datum_isteka");
                     o.Email_student = arow.GetValue<String>("email_student");
@@ -288,19 +289,19 @@ public class NatalijaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='obavestenje' ALLOW FILTERING").First();
-            obavestenje.Id_obavestenja=id.GetValue<String>("counting");
-            Profesor prof=mapper.Single<Profesor>("WHERE email=?", obavestenje.Email_profesor);
-            Predmet pred=mapper.Single<Predmet>("WHERE sifra_predmeta=?", obavestenje.Sifra_predmeta);
+            obavestenje.Id_obavestenja = id.GetValue<String>("counting");
+            Profesor prof = mapper.Single<Profesor>("WHERE email=?", obavestenje.Email_profesor);
+            Predmet pred = mapper.Single<Predmet>("WHERE sifra_predmeta=?", obavestenje.Sifra_predmeta);
             //var result = localSession.Execute("SELECT * FROM obavestenje WHERE sifra_predmeta='"+obavestenje.Sifra_predmeta+"' AND email_profesor='"+ obavestenje.Email_profesor+"' AND tekst='"+ obavestenje.Tekst +"' ALLOW FILTERING");
             //duplikati
-            if(prof != null && pred!= null )
+            if (prof != null && pred != null)
             {
-                string noviID=(Int32.Parse(obavestenje.Id_obavestenja)+1).ToString();
+                string noviID = (Int32.Parse(obavestenje.Id_obavestenja) + 1).ToString();
                 mapper.Insert<Obavestenje>(obavestenje);
-                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='obavestenje'");
+                var inc = localSession.Execute("UPDATE counting_id SET counting='" + noviID + "' WHERE tabela='obavestenje'");
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -326,18 +327,18 @@ public class NatalijaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='zabranjena_prijava' ALLOW FILTERING").First();
-            zabrana.Id=id.GetValue<String>("counting");
-            Student prof=mapper.Single<Student>("WHERE email=?", zabrana.Email_student);
-            Predmet pred=mapper.Single<Predmet>("WHERE sifra_predmeta=?", zabrana.Sifra_predmeta);
-            var result = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='"+zabrana.Sifra_predmeta+"' AND email_student='"+ zabrana.Email_student+"' ALLOW FILTERING");
-            if(prof != null && pred!= null )//&& result== null) duplikati
+            zabrana.Id = id.GetValue<String>("counting");
+            Student prof = mapper.Single<Student>("WHERE email=?", zabrana.Email_student);
+            Predmet pred = mapper.Single<Predmet>("WHERE sifra_predmeta=?", zabrana.Sifra_predmeta);
+            var result = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='" + zabrana.Sifra_predmeta + "' AND email_student='" + zabrana.Email_student + "' ALLOW FILTERING");
+            if (prof != null && pred != null)//&& result== null) duplikati
             {
                 mapper.Insert<ZabranjenaPrijava>(zabrana);
-                string noviID=(Int32.Parse(zabrana.Id)+1).ToString();
-                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='zabranjena_prijava'");
+                string noviID = (Int32.Parse(zabrana.Id) + 1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='" + noviID + "' WHERE tabela='zabranjena_prijava'");
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -361,9 +362,9 @@ public class NatalijaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-           // var result=localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='"+sifra+"' AND email_student='"+ email+"' ");
-           //string id= result.Id;
-            var result=localSession.Execute("DELETE FROM zabranjena_prijava WHERE id='"+id+"' ");
+            // var result=localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='"+sifra+"' AND email_student='"+ email+"' ");
+            //string id= result.Id;
+            var result = localSession.Execute("DELETE FROM zabranjena_prijava WHERE id='" + id + "' ");
             cluster.Shutdown();
             return Ok();
         }
@@ -373,7 +374,79 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getSlobodneSale/{sifra}")] 
+    [Route("getSSala/{sifra}")]
+    public IActionResult SlobSale(string sifra)
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            DateTime today = DateTime.Today;
+            var date = today.Year + "-" + today.Month + "-" + today.Day;
+
+
+            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
+            string rokID = "";
+            foreach (var i in result)
+            {
+                rokID = i.GetValue<string>("id");
+                break;
+            }
+            var zauzete = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "'  ALLOW FILTERING");
+            List<string> zauzeteSale = new List<string>();
+            foreach (var i in zauzete)
+            {
+                if (i.GetValue<string>("naziv_sale") != "tbd")
+                {
+                    zauzeteSale.Add(i.GetValue<string>("naziv_sale"));
+                }
+            }
+            zauzeteSale.Distinct();
+
+            var sveSale = mapper.Fetch<Sala>().ToList();
+            var slovodneSale = new List<Sala>(sveSale);
+
+            Int64 br = 0;
+            //prebroji sve studente
+            RowSet broj = localSession.Execute("SELECT COUNT(*) FROM prijave_ispita WHERE sifra_predmeta='" + sifra + "' AND rok_id='" + rokID + "'ALLOW FILTERING");
+            foreach (var b in broj)
+            {
+                br = b.GetValue<Int64>("count");
+                break;
+            }
+
+
+            foreach (var i in sveSale)
+            {
+                foreach (var j in zauzeteSale)
+                {
+                    if (i.Naziv == j || i.Kapacitet < br)
+                    {
+                        slovodneSale.Remove(i);
+                    }
+                }
+            }
+
+            return new JsonResult(slovodneSale);
+
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+
+
+    [HttpGet]
+    [Route("getSlobodneSale/{sifra}")]
     public IActionResult SlobodneSale(string sifra) //preuzimanje info o svim slobodnim salama koje odg broju prijava
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
@@ -386,7 +459,7 @@ public class NatalijaController : ControllerBase
             IMapper mapper = new Mapper(localSession);
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
-            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='"+date+"' AND  zavrsetak_roka>='"+date+ "' ALLOW FILTERING");//sve mpguce sale
+            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
             string rokID = "";
             foreach (var i in result)
             {
@@ -394,54 +467,54 @@ public class NatalijaController : ControllerBase
                 break;
             }
             //prvo ispitivanje da li je vec zauzeta sala za taj ispit
-            var free = localSession.Execute("SELECT * FROM satnica WHERE rok_id='"+ rokID+ "' AND sifra_predmeta='"+sifra+"' ALLOW FILTERING");
+            var free = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
             foreach (var i in free)
             {
                 //if(i.GetValue<String>("naziv_sale")!=null)
-                  // return BadRequest(400);
+                // return BadRequest(400);
                 break;
             }
+            var zauzete = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' ALLOW FILTERING");//sve mpguce sale
             Int64 br = 0;
-            var zauzete = localSession.Execute("SELECT * FROM satnica WHERE rok_id='"+ rokID+ "' ALLOW FILTERING");//sve mpguce sale
             //prebroji sve studente
-            RowSet broj = localSession.Execute("SELECT COUNT(*) FROM prijave_ispita WHERE sifra_predmeta='" + sifra +"' AND rok_id='"+"'ALLOW FILTERING");
+            RowSet broj = localSession.Execute("SELECT COUNT(*) FROM prijave_ispita WHERE sifra_predmeta='" + sifra + "' AND rok_id='" + "'ALLOW FILTERING");
             foreach (var b in broj)
-                {
-                    br = b.GetValue<Int64>("count");
-                    break;
-                }
-            List<Sala> sale=mapper.Fetch<Sala>().ToList();
-            List<Sala> slobodne=new List<Sala>();
-            int j=0;
-            foreach (var b in broj)
-                {
-                    j++;
-                    break;
-                }
-            if(j>0)
             {
-            j=0;
-            foreach(var s in sale)
-            {
-                foreach(var z in zauzete)
-                {
-                    var nazi=z.GetValue<String>("naziv_sale");
-                    if(nazi==s.Naziv)
-                        j++;
-                }
-                if(j==0)
-                   slobodne.Add(s);
-                j=0;
+                br = b.GetValue<Int64>("count");
+                break;
             }
+            List<Sala> sale = mapper.Fetch<Sala>().ToList();
+            List<Sala> slobodne = new List<Sala>();
+            int j = 0;
+            foreach (var b in broj)
+            {
+                j++;
+                break;
+            }
+            if (j > 0)
+            {
+                j = 0;
+                foreach (var s in sale)
+                {
+                    foreach (var z in zauzete)
+                    {
+                        var nazi = z.GetValue<String>("naziv_sale");
+                        if (nazi == s.Naziv)
+                            j++;
+                    }
+                    if (j == 0)
+                        slobodne.Add(s);
+                    j = 0;
+                }
             }
             else
             {
-                slobodne=sale; //sve su slobodne
+                slobodne = sale; //sve su slobodne
             }
-            List<Sala> pom=new List<Sala>();
-            foreach(Sala s in slobodne)
+            List<Sala> pom = new List<Sala>();
+            foreach (Sala s in slobodne)
             {
-                if(s.Kapacitet>=br)
+                if (s.Kapacitet >= br)
                     pom.Add(s); //svi koji odg kapacitetu
             }
             //da se izracuna koja sala
@@ -471,27 +544,27 @@ public class NatalijaController : ControllerBase
             IMapper mapper = new Mapper(localSession);
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
-            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='"+date+"' AND  zavrsetak_roka>='"+date+ "' ALLOW FILTERING");//sve mpguce sale
+            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
             string rokID = "";
             foreach (var i in result)
             {
                 rokID = i.GetValue<string>("id");
                 break;
             }
-            List<PredajePredmet> result2 =mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING",email).ToList();
-            List<Predmet> ispiti= new List<Predmet>(); 
-            List<String> nazivi=new List<String>();
+            List<PredajePredmet> result2 = mapper.Fetch<PredajePredmet>("WHERE email_profesora=? ALLOW FILTERING", email).ToList();
+            List<Predmet> ispiti = new List<Predmet>();
+            List<String> nazivi = new List<String>();
             foreach (var row in result2)
             {
-                Predmet p= new Predmet();
-                var sat= localSession.Execute("SELECT * FROM satnica WHERE rok_id='"+ rokID+ "' AND sifra_predmeta='"+row.Sifra_predmeta+"' ALLOW FILTERING");
+                Predmet p = new Predmet();
+                var sat = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + row.Sifra_predmeta + "' ALLOW FILTERING");
                 foreach (var i in sat)
                 {
-                   if(i.GetValue<String>("naziv_sale")==null || i.GetValue<String>("naziv_sale")=="")
-                   {
-                      p= mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
-                      ispiti.Add(p);
-                   }
+                    if (i.GetValue<String>("naziv_sale") == null || i.GetValue<String>("naziv_sale") == "")
+                    {
+                        p = mapper.Single<Predmet>("WHERE sifra_predmeta=?", row.Sifra_predmeta);
+                        ispiti.Add(p);
+                    }
                 }
             }
             return new JsonResult(ispiti);
@@ -507,7 +580,7 @@ public class NatalijaController : ControllerBase
     }
     [HttpPut]
     [Route("updateSatnica/{sifra}")]
-    public IActionResult updateSatnica(string sifra,[FromBody] Satnica satnica)
+    public IActionResult updateSatnica(string sifra, [FromBody] Satnica satnica)
     {
         try
         {
@@ -516,22 +589,22 @@ public class NatalijaController : ControllerBase
             IMapper mapper = new Mapper(localSession);
             DateTime today = DateTime.Today;
             var date = today.Year + "-" + today.Month + "-" + today.Day;
-            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='"+date+"' AND  zavrsetak_roka>='"+date+ "' ALLOW FILTERING");//sve mpguce sale
+            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date + "' ALLOW FILTERING");//sve mpguce sale
             string rokID = "";
             foreach (var i in result)
             {
                 rokID = i.GetValue<string>("id");
                 break;
             }
-            Sala sale=mapper.Single<Sala>("WHERE naziv=? ALLOW FILTERING", satnica.Naziv_sale);
-            var sat= localSession.Execute("SELECT * FROM satnica WHERE rok_id='"+ rokID+ "' AND sifra_predmeta='"+sifra+"' ALLOW FILTERING");
-            string satnicaID="";
+            Sala sale = mapper.Single<Sala>("WHERE naziv=? ALLOW FILTERING", satnica.Naziv_sale);
+            var sat = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
+            string satnicaID = "";
             foreach (var i in sat)
             {
                 satnicaID = i.GetValue<string>("id");
                 break;
             }
-            var inc = localSession.Execute("UPDATE satnica SET naziv_sale='"+satnica.Naziv_sale+"' WHERE id='"+satnicaID+"' AND rok_id='"+rokID+"'");
+            var inc = localSession.Execute("UPDATE satnica SET naziv_sale='" + satnica.Naziv_sale + "' WHERE id='" + satnicaID + "' AND rok_id='" + rokID + "'");
             cluster.Shutdown();
             return Ok();
         }

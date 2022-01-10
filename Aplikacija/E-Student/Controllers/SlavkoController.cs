@@ -206,6 +206,7 @@ public class SlavkoController : ControllerBase
             foreach (var p in mogucePrijave)
             {
                 Int64 br = 0;
+                //count ne bi trebalo da se koristi ali tako smo u pocetku osmislili projekat :3
                 RowSet broj = localSession.Execute("SELECT COUNT(*) FROM prijave_ispita WHERE email_studenta='" + student.Email + "' AND sifra_predmeta='" + p.Sifra_Predmeta + "' ALLOW FILTERING");
                 foreach (var b in broj)
                 {

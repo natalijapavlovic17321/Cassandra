@@ -194,4 +194,82 @@ public class SaskeController : ControllerBase
             cluster.Shutdown();
         }
     }
+    [HttpGet]
+    [Route("getObavestenjaStudenta/{email}")]
+    public IActionResult ObavestenjaStudenta(string email) 
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            var result = localSession.Execute("SELECT * FROM obavestenje ALLOW FILTERING");
+            List<Obavestenje> obavestenja = new List<Obavestenje>();
+            foreach (var row in result)
+            {
+                Obavestenje o = new Obavestenje();
+                o.Id_obavestenja = row.GetValue<String>("id_obavestenja");
+                o.Datum_objave = row.GetValue<DateTime>("datum_objave");
+                o.Email_profesor = row.GetValue<String>("email_profesor");
+                o.Sifra_predmeta = row.GetValue<String>("sifra_predmeta");
+                o.Tekst = row.GetValue<String>("tekst");
+                obavestenja.Add(o);
+            }
+            Student student = mapper.Single<Student>("WHERE email=? ALLOW FILTERING", email);
+            
+            
+            List<Predmet> predmeti = mapper.Fetch<Predmet>("WHERE smer=? AND semestar<=? ALLOW FILTERING", student.Smer, student.Semestar).ToList(); // svi predmeti koje je slusao student
+
+            List<PredajePredmet> profesori = new List<PredajePredmet>();
+
+            foreach (var predmet in predmeti)
+
+            {
+
+                profesori.AddRange(mapper.Fetch<PredajePredmet>("WHERE sifra_predmeta=? ALLOW FILTERING", predmet.Sifra_Predmeta).ToList());
+
+            }
+
+            List<Obavestenje> obavestenjaRet = new List<Obavestenje>();
+            foreach(var j in obavestenja)
+            {
+                foreach(var pr in profesori)
+                {
+                   if(j.Email_profesor==pr.Email_profesora)
+                        obavestenjaRet.Add(j); 
+                }
+                
+            }
+            var returnValue = new List<object>();
+            foreach(var obav in obavestenjaRet)
+            {
+                foreach(var predm in predmeti)
+                {
+                    if(predm.Sifra_Predmeta==obav.Sifra_predmeta)
+                    {
+                        DateTime datum=obav.Datum_objave;
+                        string emailProf=obav.Email_profesor;
+                        string predmet=predm.NazivPredmeta;
+                        string obavestenje=obav.Tekst;
+                        returnValue.Add(new { datum,emailProf,predmet,obavestenje});
+                    }
+                   
+                }
+                
+                
+            }
+            return new JsonResult(returnValue);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
 }

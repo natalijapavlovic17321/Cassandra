@@ -1,5 +1,6 @@
 import {predmet} from "./predmet.js";
 import {zabrana} from "./zabrana.js";
+import {sala} from "./sala.js";
 export class profesor{
     constructor(email,ime,prezime,godina,brtel, kancelarija){
         this.kontejnerProfesor=null;
@@ -8,8 +9,9 @@ export class profesor{
         this.email = email;
         this.brtel = brtel;
         this.kancelarija = kancelarija;
-        this.ispiti=[]
-        this.zabrane=[]
+        this.ispiti=[];
+        this.zabrane=[];
+        this.sala=[];
     }
     dodajProfesor(email,ime,prezime,godina,brtel, kancelarija){
         this.ime = ime;
@@ -25,6 +27,10 @@ export class profesor{
     dodajZabranu(p)
     {
         this.zabrane.push(p);
+    }
+    dodajSalu(p)
+    {
+        this.sala.push(p);
     }
     setEmail(e)
     {
@@ -322,9 +328,38 @@ export class profesor{
          lista=this.zabrane;
       return lista;
     }
-    crtajDodavanjeMesta()
+    crtajMesto()
     {
       var d5=document.getElementById("divGdeSeRadiSve");
+      d5.className="red";
+      var lab= document.createElement("h3");
+      lab.innerText="Unesite salu za ispit:";
+      d5.appendChild(lab);
+      var l2=document.createElement("label");
+      l2.innerHTML="Predmeti:";
+      d5.appendChild(l2);
+      var sel=document.createElement("select");
+      sel.style="width:200px";
+      sel.id="selectID";
+      var o=document.createElement("option");
+      d5.appendChild(sel);
+      this.ispiti.forEach(i=>{
+          var o=document.createElement("option");
+          o.value=i.sifra_predmeta;
+          o.innerHTML=i.sifra_predmeta;
+          o.selected=false;
+          o.style="width:200px";
+          sel.appendChild(o);
+      });
+      var l=document.createElement("label");
+      l.innerHTML="Sala:";
+      d5.appendChild(l);
+      this.preuzmiSale();
+    }
+    crtajSale()
+    {
+      var d5=document.getElementById("divGdeSeRadiSve");
+      //tabela il nesto
     }
     getProfesor()
     {
@@ -505,5 +540,85 @@ export class profesor{
             }
           })
           .catch((error) => console.error("Greska sa prijavljivanjem", error));
+    }
+    dodajMesto()
+    {
+      this.ispiti.length=0;
+      fetch("https://localhost:7078/Natalija/getIspitiZaSalu/"+this.email, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+            else {
+              data.forEach(element => {
+                var p1 = new predmet(element.sifra_Predmeta, element.espb,element.nazivPredmeta,element.semestar,element.smer);
+                this.dodajPredmet(p1);
+              });
+              this.crtajMesto();
+            }
+          })
+          .catch((error) => console.error("Greska sa prijavljivanjem", error));
+    }
+    preuzmiSale(sifra)
+    {
+      this.ispiti.length=0;
+      fetch("https://localhost:7078/Natalija/getSlobodneSale/"+sifra, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+            else {
+              data.forEach(element => {
+                var p1 = new sala(element.naziv, element.kapacitet,element.sprat);
+                this.dodajSalu(p1);
+              });
+              this.crtajSale();
+            }
+          })
+          .catch((error) => console.error("Greska sa prijavljivanjem", error));
+    }
+    fetchMesto()
+    {
+      {
+        var naziv //izracunati
+        var sifra=document.getElementById("selectID").value;
+        if(tekst!="")
+        {
+        fetch("https://localhost:7078/Natalija/updateSatnica/"+sifra, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            id: "string",
+            rok_id: "string",
+            datum: "2022-01-10T01:11:14.421Z",
+            sifra_predmeta: "string",
+            vreme: "string",
+            naziv_sale: naziv
+          }),
+        })
+          .then((p) => {
+            if (p.ok) {
+              alert("Uspesno dodavanje obavestenja");
+            } else {
+              alert("Greska kod dodavanja");
+            }
+          })
+          .catch((p) => {
+            alert("Greška sa konekcijom.");
+          });
+        }
+        else alert("Unesite sva polja");
+      }
     }
 }

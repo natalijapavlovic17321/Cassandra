@@ -56,4 +56,5 @@ function dodajSalu()
 {
     var d5=document.getElementById("divGdeSeRadiSve");
     d5.innerHTML="";
+    p.dodajMesto();
 }

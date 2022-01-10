@@ -1260,6 +1260,7 @@ section {
 .footer {
   background: #2a2c30;
   padding-top: 50px;
+  margin-bottom: 1rem;
 }
 .footer .footer-logo .navbar-brand {
   color: #fff;

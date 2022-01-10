@@ -50,11 +50,11 @@
 
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-          <li><a href="registrujSe.html">Registruj se</a></li>
+          <li><a href="index.html">Pocetna strana</a></li>
 
         </ul>
 
-      </nav><!-- .navbar -->
+      </nav>
 
     </div>
   </header><!-- End Header -->
@@ -70,8 +70,12 @@
               <div class="row">
                 <div class="col-md-12 col-lg-8">
                   <div class="title-single-box">
-                    <h1 class="title-single">Moj profil</h1>
-                    <button type="submit" class="btn btn-a" id="btnOdjaviSe">Odjavi se</button>
+                    <h1 id="mainIme" class="title-single"></h1>
+                    <div class="container">
+                      <button type="submit" class="btn btn-a" id="btnOdjaviSe">Odjavi se</button>
+                      <button id="btnDodajRecept" onclick="location.href='prijavaIspita.html';"
+                        class="btn btn-a">Prijavi ispit</button>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-3 col-lg-4">
@@ -82,63 +86,39 @@
           </section>
           <section id="userHTML" class="user">
             <div class="container">
-              <div class="agent-info-box">
-                <div class="agent-title">
-                  <div class="title-box-d">
-                    <h3 class="title-d">Broj indeksa: <span id="brindeksaUser" class="color-text-a usernameStyle">
-                      </span> </h3>
-                  </div>
-                </div>
-                <div class="agent-content mb-3">
-                  <h3 class="title-d">Ime: <span id="imeUser" class="color-text-a usernameStyle"> </span></h3>
-                  <div class="info-agents color-a">
-                    <h3 class="title-d">Email: <span id="emailUser" class="color-text-a usernameStyle"> </span></h3>
+              <div class="card">
 
-                  </div>
-                  <div class="col-md-12">
-                    <div class="row">
-                      <div class="col-lg-3 col-sm-6 mb-12">
-                        <button id="btnDodajRecept" onclick="location.href='prijavaIspita.html';"
-                          style="width: 100%;height: 90px;" class="btna btn-a">Prijavi ispit</button>
-                        <p></p>
-                      </div>
 
-                    </div>
-                  </div>
-                  <p></p>
-                  <section id="ispitiStudent">
-                    <div class="container">
-                      <div class="row">
-                        <div class="col-lg-6 col-sm-6 mb-6">
-                          <div id="polozeniIspiti">
-                            <!--<table id="tablepIspiti">
-                              <tr>
-                                <th>Predmet</th>
-                                <th>Ocena</th>
 
-                              </tr>
-                            </table>-->
-                          </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-6 mb-6">
-                          <div id="zabranjeniIspiti">
-                            
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                </div>
-
-                <div class="container">
-                  <h1 id="bookmarkovaniLbl" class="title-single hide">Bookmarkovani recepti:</h1>
-                  <div>
-
-                  </div>
+                <div class="info-agents color-a">
+                  <h3 class="title-d">Email: <span id="emailUser" class="color-text-a usernameStyle card-header"> </span></h3>
+                  <h3 class="title-d">Semestar: <span id="smerlUser" class="color-text-a usernameStyle"> </span></h3>
+                  <h3 class="title-d">Smer: <span id="semestarUser" class="color-text-a usernameStyle"> </span></h3>
+                  <h3 class="title-d">Espb: <span id="espbUser" class="color-text-a usernameStyle"></span></h3>
+                  <h3 class="title-d">Prosecna ocena: <span id="prosecnaOcenaUser"
+                      class="color-text-a usernameStyle"></span></h3>
 
                 </div>
               </div>
+              <section id="ispitiStudent">
+                <div class="container topmargina">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6 mb-6">
+                      <div id="polozeniIspiti">
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 mb-6">
+                      <div id="zabranjeniIspiti">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+
+
+
 
             </div>
         </div>
@@ -164,7 +144,7 @@
 
 
       </div>
-    </div>
+    </div>-->
 
     <div class="copyrights">
       <div class="container">

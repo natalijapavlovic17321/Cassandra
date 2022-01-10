@@ -15,12 +15,12 @@ else
     s.getStudent();
     //s.getPolozeneIspite()
     var odjaviSeBtn = document.getElementById("btnOdjaviSe");
-    //odjaviSeBtn.addEventListener("click",odjaviSe());
-
-    function odjaviSe()
-    {
-        console.log("odjavi se");
+    odjaviSeBtn.addEventListener("click",function(){
+          console.log("odjavi se");
         sessionStorage.clear();
         location.href ="index.html"
-    }
+    });
+
+    
 }
+ 

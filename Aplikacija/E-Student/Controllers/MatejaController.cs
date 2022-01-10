@@ -249,30 +249,56 @@ public class MatejaController : ControllerBase
         }
     }
 
-    /*[HttpPost]
-    [Route("addMesto")]
-    public IActionResult AddMesto([FromBody] Mesto mesto)
+    [HttpPost]
+    [Route("addSatnica")]
+    public IActionResult AddSatnica([FromBody] Satnica satnica)
     {
-        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
 
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
-            var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='mesto' ALLOW FILTERING").First();
-            Sala provera = new Sala();
-            List<Sala> result = mapper.Fetch<Sala>("WHERE naziv=? ALLOW FILTERING", mesto.Sala_naziv).ToList();
+            var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='satnica' ALLOW FILTERING").First();
+            Satnica provera = new Satnica();
+            var result = localSession.Execute("SELECT sifra_predmeta FROM satnica WHERE sifra_predmeta='" + satnica.Sifra_predmeta + "' ALLOW FILTERING");
             foreach (var p in result)
             {
-               provera.Naziv = p.Naziv;
+                provera.Sifra_predmeta = p.GetValue<String>("sifra_predmeta");
             }
-            mesto.Id=id.GetValue<String>("counting");
-            mesto.Mesto_br = Int32.Parse(mesto.Id);
-            if(mesto != null && provera.Naziv != null)
+            var proveraDatuma = localSession.Execute("SELECT * FROM rok");
+            bool t = false;
+            foreach (var p in proveraDatuma)
             {
-                mapper.Insert<Mesto>(mesto);
-                string noviID=(Int32.Parse(mesto.Id)+1).ToString();
-                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='mesto'");
+                Rok r = new Rok();
+                r.Pocetak_roka = p.GetValue<DateTime>("pocetak_roka");
+                r.Zavrsetak_roka = p.GetValue<DateTime>("zavrsetak_roka");
+                r.Id = p.GetValue<String>("id");
+                if (r.Pocetak_roka <= satnica.Datum && r.Zavrsetak_roka >= satnica.Datum)
+                {
+                    satnica.Rok_id = r.Id;
+                    t = true;
+                }
+            }
+            var proveraSale = localSession.Execute("SELECT naziv FROM sala WHERE naziv='" + satnica.Naziv_sale + "' ALLOW FILTERING");
+            foreach (var p in proveraSale)
+            {
+                provera.Naziv_sale = p.GetValue<String>("naziv");
+            }
+            var proveraSifrePredmeta = localSession.Execute("SELECT sifra_predmeta FROM predmet WHERE sifra_predmeta='" + satnica.Sifra_predmeta + "' ALLOW FILTERING");
+            Satnica proveraSifre = new Satnica();
+            foreach (var p in proveraSifrePredmeta)
+            {
+                proveraSifre.Sifra_predmeta = p.GetValue<String>("sifra_predmeta");
+            }
+            satnica.Id=id.GetValue<String>("counting");
+            if(satnica != null && provera.Sifra_predmeta == null && t == true && provera.Naziv_sale != null && proveraSifre.Sifra_predmeta != null)
+            {
+                mapper.Insert<Satnica>(satnica);
+                string noviID=(Int32.Parse(satnica.Id)+1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='satnica'");
                 return Ok();
             }
             else 
@@ -288,11 +314,11 @@ public class MatejaController : ControllerBase
         {
             cluster.Shutdown();
         }
-    }*/
+    }
 
     [HttpDelete]
-    [Route("deleteMesto/{id}")]
-    public IActionResult DeleteMesto(string id)
+    [Route("deleteSatnica/{id}")]
+    public IActionResult DeleteSatnica(string id)
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
@@ -300,7 +326,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM mesto WHERE id='"+id+"'");
+            var result=localSession.Execute("DELETE FROM satnica WHERE id='"+id+"'");
             return Ok();
         }
         catch (Exception exc)

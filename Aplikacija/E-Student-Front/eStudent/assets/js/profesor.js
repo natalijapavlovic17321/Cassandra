@@ -653,24 +653,22 @@ export class profesor{
         var sifra=document.getElementById("selectID").value;
         if(naziv!="")
         {
-        fetch("https://localhost:7078/Natalija/updateSatnica/"+sifra, {
+        fetch("https://localhost:7078/Natalija/updateSatnica/"+sifra+"/"+naziv, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + sessionStorage.getItem("token"),
           },
           body: JSON.stringify({
-            id: "string",
-            rok_id: "string",
-            datum: "2022-01-10T01:11:14.421Z",
-            sifra_predmeta: "string",
-            vreme: "string",
-            naziv_sale: naziv
+            
           }),
         })
           .then((p) => {
             if (p.ok) {
               alert("Uspesno rezervisanje");
+              var d5=document.getElementById("divGdeSeRadiSve");
+              d5.innerHTML="";
+              this.crtajMesto();
             } else {
               alert("Greska kod dodavanja");
             }

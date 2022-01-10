@@ -513,8 +513,8 @@ public class NatalijaController : ControllerBase
     }
     [HttpPut]
     [Authorize(Roles = "Profesor")]
-    [Route("updateSatnica/{sifra}")]
-    public IActionResult updateSatnica(string sifra, [FromBody] Satnica satnica)
+    [Route("updateSatnica/{sifra}/{naziv}")]
+    public IActionResult updateSatnica(string sifra,string naziv)
     {
         try
         {
@@ -530,7 +530,7 @@ public class NatalijaController : ControllerBase
                 rokID = i.GetValue<string>("id");
                 break;
             }
-            Sala sale = mapper.Single<Sala>("WHERE naziv=? ALLOW FILTERING", satnica.Naziv_sale);
+            Sala sale = mapper.Single<Sala>("WHERE naziv=? ALLOW FILTERING", naziv);
             var sat = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
             string satnicaID = "";
             foreach (var i in sat)
@@ -538,7 +538,7 @@ public class NatalijaController : ControllerBase
                 satnicaID = i.GetValue<string>("id");
                 break;
             }
-            var inc = localSession.Execute("UPDATE satnica SET naziv_sale='" + satnica.Naziv_sale + "' WHERE id='" + satnicaID + "' AND rok_id='" + rokID + "'");
+            var inc = localSession.Execute("UPDATE satnica SET naziv_sale='" + naziv + "' WHERE id='" + satnicaID + "' AND rok_id='" + rokID + "'");
             cluster.Shutdown();
             return Ok();
         }

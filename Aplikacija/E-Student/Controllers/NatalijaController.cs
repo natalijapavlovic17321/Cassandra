@@ -345,7 +345,7 @@ public class NatalijaController : ControllerBase
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='zabranjena_prijava' ALLOW FILTERING").First();
             zabrana.Id = id.GetValue<String>("counting");
             Student prof = mapper.Single<Student>("WHERE indeks=? ALLOW FILTERING", zabrana.Email_student);
-            zabrana.Email_student=prof.Email;
+            zabrana.Email_student = prof.Email;
             Predmet pred = mapper.Single<Predmet>("WHERE sifra_predmeta=?", zabrana.Sifra_predmeta);
             var result = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='" + zabrana.Sifra_predmeta + "' AND email_student='" + zabrana.Email_student + "' ALLOW FILTERING");
             if (prof != null && pred != null)//&& result== null) duplikati
@@ -416,8 +416,8 @@ public class NatalijaController : ControllerBase
             var free = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "' AND sifra_predmeta='" + sifra + "' ALLOW FILTERING");
             foreach (var i in free)
             {
-                if(i.GetValue<string>("naziv_sale")!="tbd")
-                   return BadRequest("Vec je rezervisana sala");
+                if (i.GetValue<string>("naziv_sale") != "tbd")
+                    return BadRequest("Vec je rezervisana sala");
                 break;
             }
             var zauzete = localSession.Execute("SELECT * FROM satnica WHERE rok_id='" + rokID + "'  ALLOW FILTERING");
@@ -445,13 +445,13 @@ public class NatalijaController : ControllerBase
             {
                 foreach (var j in zauzeteSale)
                 {
-                    if (i.Naziv == j )
+                    if (i.Naziv == j)
                     {
                         slovodneSale.Remove(i);
                     }
                 }
-                if(i.Kapacitet<br)
-                  slovodneSale.Remove(i);
+                if (i.Kapacitet < br)
+                    slovodneSale.Remove(i);
             }
             return new JsonResult(slovodneSale);
         }
@@ -515,7 +515,7 @@ public class NatalijaController : ControllerBase
     [HttpPut]
     [Authorize(Roles = "Profesor")]
     [Route("updateSatnica/{sifra}/{naziv}")]
-    public IActionResult updateSatnica(string sifra,string naziv)
+    public IActionResult updateSatnica(string sifra, string naziv)
     {
         try
         {
@@ -549,7 +549,7 @@ public class NatalijaController : ControllerBase
         }
     }
     [HttpPost]
-    [Authorize(Roles = "Profesor")]
+    // [Authorize(Roles = "Profesor")]
     [Route("postPolozeniIspit")]
     public IActionResult postPolozeniIspit([FromBody] PolozeniIspiti ispit) //postavljanje ocene studentu
     {
@@ -571,13 +571,13 @@ public class NatalijaController : ControllerBase
                 rokID = i.GetValue<string>("id");
                 break;
             }
-            ispit.Rok=rokID;
+            ispit.Rok = rokID;
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='zabranjena_prijava' ALLOW FILTERING").First();
             ispit.ID = id.GetValue<String>("counting");
             Student prof = mapper.Single<Student>("WHERE indeks=? ALLOW FILTERING", ispit.Email_Studenta);
-            ispit.Email_Studenta=prof.Email;
-            //var result2 = localSession.Execute("SELECT * FROM polozeni_ispiti WHERE sifra_predmeta='" + ispit.Sifra_Predmeta + "' AND email_studenta='" + ispit.Email_Studenta + "' ALLOW FILTERING");
-            if (prof != null && ispit.Ocena>5 && ispit.Ocena<11)// && result== null) //duplikati
+            ispit.Email_Studenta = prof.Email;
+            PolozeniIspiti result2 = mapper.FirstOrDefault<PolozeniIspiti>("WHERE sifra_predmeta=? AND email_studenta=? ALLOW FILTERING", ispit.Sifra_Predmeta, ispit.Email_Studenta);
+            if (prof != null && ispit.Ocena > 5 && ispit.Ocena < 11 && result2 == null) //duplikati
             {
                 mapper.Insert<PolozeniIspiti>(ispit);
                 string noviID = (Int32.Parse(ispit.ID) + 1).ToString();

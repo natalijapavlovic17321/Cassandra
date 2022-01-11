@@ -1,9 +1,14 @@
 function Register(ime,prezime,email,password,passwordConf,brTel,kanc){
+  if (ime == "" || prezime == "" || email == "" || password == "" || passwordConf == "" || brTel == "" || kanc == "")
+  {
+    alert("Unesite sva polja.");
+    return;
+  }
   fetch("https://localhost:7078/Account/registerProfesor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        //Authorization: "Bearer " + sessionStorage.getItem("token"),
+        Authorization: "Bearer " + sessionStorage.getItem("token"),
       },
       body: JSON.stringify({
       email: email,  

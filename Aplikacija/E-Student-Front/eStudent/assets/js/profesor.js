@@ -159,7 +159,7 @@ export class profesor{
       });
 
       var l1=document.createElement("label");
-      l1.innerHTML="Email studenta:";
+      l1.innerHTML="Indeks studenta:";
       d5.appendChild(l1);
       var inp1=document.createElement("input");
       inp1.id="emailZabrane";
@@ -414,6 +414,51 @@ export class profesor{
         j++;
       });
       d5.appendChild(table1);
+    }
+    crtajOcenu()
+    {
+      var d5=document.getElementById("divGdeSeRadiSve");
+      d5.className="red";
+      var lab= document.createElement("h3");
+      lab.innerText="Unesite ocenu:";
+      d5.appendChild(lab);
+      var l2=document.createElement("label");
+      l2.innerHTML="Predmet:";
+      d5.appendChild(l2);
+      var sel=document.createElement("select");
+      sel.style="width:200px";
+      sel.id="selectID";
+      d5.appendChild(sel);
+      this.ispiti.forEach(i=>{
+          var o=document.createElement("option");
+          o.value=i;
+          o.innerHTML=i;
+          o.selected=false;
+          o.style="width:200px";
+          sel.appendChild(o);
+      });
+      var l1=document.createElement("label");
+      l1.innerHTML="Indeks studenta:";
+      d5.appendChild(l1);
+      var inp1=document.createElement("input");
+      inp1.id="indeksOcene";
+      inp1.style="width:200px";
+      d5.appendChild(inp1);
+      var l77=document.createElement("label");
+      l77.innerHTML="Ocena:";
+      d5.appendChild(l77);
+      var inp77=document.createElement("input");
+      inp77.id="ocena";
+      inp77.style="width:200px";
+      d5.appendChild(inp77);
+      var baton=document.createElement("button");
+      baton.classList="btn btna";
+      baton.style="width:130px ";
+      baton.innerHTML="Dodaj";
+      d5.appendChild(baton);
+      baton.addEventListener("click", (e) => {
+        this.fetchOcena();
+      });
     }
     getProfesor()
     {
@@ -679,5 +724,62 @@ export class profesor{
         }
         else alert("Unesite sva polja");
       }
+    }
+    dodajOcenu()
+    {
+      this.ispiti.length=0;
+      fetch("https://localhost:7078/Natalija/getProfesorIspitiNazivi", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + sessionStorage.getItem("token")
+            }
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.title == "Unauthorized") alert("Lose korisnicko ime ili sifra.");
+              else {
+                data.forEach(element => {
+                    this.ispiti.push(element);
+                });
+                this.crtajOcenu();
+              }
+            })
+            .catch((error) => console.error("Greska", error));
+    }
+    fetchOcena()
+    {
+      var ocena=document.getElementById("ocena").value;
+      var sifra=document.getElementById("selectID").value;
+      var indeks=document.getElementById("indeksOcene").value;
+      if(ocena == "" || indeks=="")
+      {
+        alert("Unesite sva polja");
+        return;
+      }
+      fetch("https://localhost:7078/Natalija/postPolozeniIspit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token")
+        },
+        body: JSON.stringify({
+          id: "string",
+          email_Studenta: indeks,
+          ocena: ocena,
+          rok: "string",
+          sifra_Predmeta: sifra
+        }),
+      })
+        .then((p) => {
+          if (p.ok) {
+            alert("Uspesno dodavanje ocene");
+          } else {
+            alert("Greska kod dodavanja");
+          }
+        })
+        .catch((p) => {
+          alert("Greška sa konekcijom.");
+        });
     }
 }

@@ -344,7 +344,8 @@ public class NatalijaController : ControllerBase
             IMapper mapper = new Mapper(localSession);
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='zabranjena_prijava' ALLOW FILTERING").First();
             zabrana.Id = id.GetValue<String>("counting");
-            Student prof = mapper.Single<Student>("WHERE email=?", zabrana.Email_student);
+            Student prof = mapper.Single<Student>("WHERE indeks=? ALLOW FILTERING", zabrana.Email_student);
+            zabrana.Email_student=prof.Email;
             Predmet pred = mapper.Single<Predmet>("WHERE sifra_predmeta=?", zabrana.Sifra_predmeta);
             var result = localSession.Execute("SELECT * FROM zabranjena_prijava WHERE sifra_predmeta='" + zabrana.Sifra_predmeta + "' AND email_student='" + zabrana.Email_student + "' ALLOW FILTERING");
             if (prof != null && pred != null)//&& result== null) duplikati
@@ -545,6 +546,56 @@ public class NatalijaController : ControllerBase
         catch (Exception ex)
         {
             return BadRequest(ex.ToString());
+        }
+    }
+    [HttpPost]
+    [Authorize(Roles = "Profesor")]
+    [Route("postPolozeniIspit")]
+    public IActionResult postPolozeniIspit([FromBody] PolozeniIspiti ispit) //postavljanje ocene studentu
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            DateTime today = DateTime.Today;
+            var date = today.Year + "-" + today.Month + "-" + today.Day;
+            DateTime today2 = DateTime.Today.AddDays(-30);
+            var date2 = today.Year + "-" + today.Month + "-" + today.Day;
+            var result = localSession.Execute("SELECT id FROM rok WHERE kraj_prijave<='" + date + "' AND  zavrsetak_roka>='" + date2 + "' ALLOW FILTERING");//sve mpguce sale
+            string rokID = "";
+            foreach (var i in result)
+            {
+                rokID = i.GetValue<string>("id");
+                break;
+            }
+            ispit.Rok=rokID;
+            var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='zabranjena_prijava' ALLOW FILTERING").First();
+            ispit.ID = id.GetValue<String>("counting");
+            Student prof = mapper.Single<Student>("WHERE indeks=? ALLOW FILTERING", ispit.Email_Studenta);
+            ispit.Email_Studenta=prof.Email;
+            //var result2 = localSession.Execute("SELECT * FROM polozeni_ispiti WHERE sifra_predmeta='" + ispit.Sifra_Predmeta + "' AND email_studenta='" + ispit.Email_Studenta + "' ALLOW FILTERING");
+            if (prof != null && ispit.Ocena>5 && ispit.Ocena<11)// && result== null) //duplikati
+            {
+                mapper.Insert<PolozeniIspiti>(ispit);
+                string noviID = (Int32.Parse(ispit.ID) + 1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='" + noviID + "' WHERE tabela='zabranjena_prijava'");
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(400);
+            }
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
         }
     }
 }

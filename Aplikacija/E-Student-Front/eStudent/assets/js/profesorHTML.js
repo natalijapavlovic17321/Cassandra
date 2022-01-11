@@ -14,9 +14,11 @@ else
         var d1 = document.getElementById("btnDodajObavestenje");
         var d2 = document.getElementById("btnDodajZabranu");
         var d3 = document.getElementById("btnDodajSalu");
+        var dO = document.getElementById("btnDodajOcenu");
         d1.addEventListener("click",dodajObavestenje); 
         d2.addEventListener("click",dodajZabranu); 
         d3.addEventListener("click",dodajSalu); 
+        dO.addEventListener("click",dodajOcenu); 
         var d5 = document.getElementById("btPrikaziZabranu");
         d5.addEventListener("click",prikaziZabranu);
     }
@@ -57,4 +59,10 @@ function dodajSalu()
     var d5=document.getElementById("divGdeSeRadiSve");
     d5.innerHTML="";
     p.dodajMesto();
+}
+function dodajOcenu()
+{
+    var d5=document.getElementById("divGdeSeRadiSve");
+    d5.innerHTML="";
+    p.dodajOcenu();
 }

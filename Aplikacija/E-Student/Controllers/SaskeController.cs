@@ -13,7 +13,7 @@ namespace E_Student.Controllers;
 public class SaskeController : ControllerBase
 {
     [HttpGet]
-    //[Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student")]
     [Route("getStudent")]
     public IActionResult student()
     {
@@ -39,6 +39,7 @@ public class SaskeController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = "Student")]
     [Route("getPolozeniIspiti")]
     public IActionResult polozeniIspiti()
     {
@@ -84,6 +85,7 @@ public class SaskeController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = "Student")]
     [Route("getPolozeniIspitiOcene")]
     public IActionResult polozeniIspitiOcena()
     {
@@ -131,6 +133,7 @@ public class SaskeController : ControllerBase
         }
     }
     [HttpGet]
+    [Authorize(Roles = "Student")]
     [Route("getZabrane")]
     public IActionResult zabrane()
     {
@@ -195,8 +198,9 @@ public class SaskeController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("getObavestenjaStudenta/{email}")]
-    public IActionResult ObavestenjaStudenta(string email) 
+    [Authorize(Roles = "Student")]
+    [Route("getObavestenjaStudenta")]
+    public IActionResult ObavestenjaStudenta() 
     {
         TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
         definitions.Define(new DateCodec());
@@ -206,6 +210,7 @@ public class SaskeController : ControllerBase
 
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
             var result = localSession.Execute("SELECT * FROM obavestenje ALLOW FILTERING");
             List<Obavestenje> obavestenja = new List<Obavestenje>();
             foreach (var row in result)
@@ -245,6 +250,62 @@ public class SaskeController : ControllerBase
             }
             var returnValue = new List<object>();
             foreach(var obav in obavestenjaRet)
+            {
+                foreach(var predm in predmeti)
+                {
+                    if(predm.Sifra_Predmeta==obav.Sifra_predmeta)
+                    {
+                        DateTime datum=obav.Datum_objave;
+                        string emailProf=obav.Email_profesor;
+                        string predmet=predm.NazivPredmeta;
+                        string obavestenje=obav.Tekst;
+                        returnValue.Add(new { datum,emailProf,predmet,obavestenje});
+                    }
+                   
+                }
+                
+                
+            }
+            return new JsonResult(returnValue);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+    [HttpGet]
+    
+    [Route("getObavestenjaProfesora")]
+    public IActionResult ObavestenjaProfesora() //preuzimanje info o obavestenjima nekog profesora
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            var email = HttpContext.User.Identity!.Name;
+            var result = localSession.Execute("SELECT * FROM obavestenje WHERE email_profesor='" + email + "' ALLOW FILTERING");
+            List<Obavestenje> obavestenja = new List<Obavestenje>();
+            foreach (var row in result)
+            {
+                Obavestenje o = new Obavestenje();
+                o.Id_obavestenja = row.GetValue<String>("id_obavestenja");
+                o.Datum_objave = row.GetValue<DateTime>("datum_objave");
+                o.Email_profesor = row.GetValue<String>("email_profesor");
+                o.Sifra_predmeta = row.GetValue<String>("sifra_predmeta");
+                o.Tekst = row.GetValue<String>("tekst");
+                obavestenja.Add(o);
+            }
+            List<Predmet> predmeti = mapper.Fetch<Predmet>().ToList(); // svi predmeti koje je slusao student
+            var returnValue = new List<object>();
+            foreach(var obav in obavestenja)
             {
                 foreach(var predm in predmeti)
                 {

@@ -441,6 +441,9 @@ export class profesor{
       l1.innerHTML="Indeks studenta:";
       d5.appendChild(l1);
       var inp1=document.createElement("input");
+      inp1.type="number";
+      inp1.min="6";
+      inp1.max="10";
       inp1.id="indeksOcene";
       inp1.style="width:200px";
       d5.appendChild(inp1);
@@ -752,7 +755,7 @@ export class profesor{
       var ocena=document.getElementById("ocena").value;
       var sifra=document.getElementById("selectID").value;
       var indeks=document.getElementById("indeksOcene").value;
-      if(ocena == "" || indeks=="")
+      if(ocena == "" || indeks=="" || ocena>10 || ocena<6)
       {
         alert("Unesite sva polja");
         return;

@@ -29,6 +29,7 @@ function prijavljeniIspiti() {
       data.forEach((element) => {
         console.log(element);
         row = tablica.insertRow();
+        row.id = "bris" + element.sifraPredmeta;
         let cell = row.insertCell();
         cell.innerHTML = element.naziv;
 
@@ -75,6 +76,10 @@ function odjaviIspit(idd) {
   })
     .then((p) => {
       if (p.ok) {
+        console.log(document.getElementById("bris" + idd));
+        let rowToDelete = document.getElementById("bris" + idd);
+        rowToDelete.parentNode.removeChild(rowToDelete);
+
         alert("Uspesno odjava");
       } else {
         alert("Greska kod odjave");
@@ -89,7 +94,7 @@ mogucePrijave();
 function mogucePrijave() {
   var tableDiv = document.getElementById("rokInfo");
   let header = document.createElement("h3");
-  header.innerHTML = "Tekuci ispitni asdasdrok";
+  header.innerHTML = "Tekuci ispitni rok";
   tableDiv.appendChild(header);
   var table = document.createElement("table");
   var row = table.insertRow();
@@ -229,6 +234,7 @@ function prijaviIspite() {
     if (element.checked) {
       let wholeRow = document.getElementById(element.id + "ROW");
       let row = tablica.insertRow();
+      row.id = "bris" + element.id;
       let cell = row.insertCell();
       cell.innerHTML = wholeRow.cells[1].innerHTML;
       cell = row.insertCell();
@@ -237,6 +243,16 @@ function prijaviIspite() {
       cell.innerHTML = wholeRow.cells[4].innerHTML;
       cell = row.insertCell();
       cell.innerHTML = "Jos uvek nije odluceno";
+      cell = row.insertCell();
+      let btn = document.createElement("button");
+      btn.innerHTML = "Odjavi";
+      btn.addEventListener("click", function () {
+        odjaviIspit(btn.id);
+      });
+      btn.id = element.id;
+      btn.classList = "btn btn-a";
+
+      cell.appendChild(btn);
       wholeRow.parentNode.removeChild(wholeRow);
     }
   });

@@ -66,12 +66,9 @@
               height="500" alt="" title="" /></a>
             </div>
 
-            <div class="col-lg-3 col-sm-3 mb-3">
-                <button type="submit" class="btna btn-a" id="signUp">Registruj se</button>
-                <p></p>
+            <div class="col-lg-3 col-sm-3 mb-3">             
                 
                 <div>
-                    <p style="color: black;">Prezime: *</p>
                     <p style="color: black;">Ime: *<p>
                         <input id="imeRegister" type="text" name="Name" class="form-control" ng-model="ime" required>
                     </p>
@@ -80,14 +77,26 @@
                         required>
                     </p>
                     <p style="color: black;">Broj indeksa: *</p>
-                        <input id="usernameRegister" type="text" name="Username" class="form-control" ng-model="username"
+                        <input id="brIndeks" type="text" name="BrInedeks" class="form-control" ng-model="brInedeks"
                         required>
                     </p>
+                    <p style="color: black;">Godina Upisa: *</p>
+                    <input id="godUpisa" type="text" name="godUpisa" class="form-control" ng-model="godUpisa"
+                    required>
+                </p>
+                    <p style="color: black;">Smer: *</p>
+                    <input id="smer" type="text" name="Smer" class="form-control" ng-model="Smer"
+                    required>
+
+                    <p style="color: black;">Semestar: *</p>
+                    <input id="semestar" type="text" name="Semestar" class="form-control" ng-model="Semestar"
+                    required>
+               
                     <p style="color: black;">Email: *</p>
                         <input id="emailRegister" type="email" name="Adresa" class="form-control" ng-model="adresa" required>
                     </p>
                     <p style="color: black;">Šifra: *</p>
-                        <input id="passwordRegister" type="password" name="Sifra" class="form-control" minlength="6"
+                        <input id="passwordRegister" type="password" name="sifra" class="form-control" minlength="6"
                         ng-model="sifra" required>
                     
                     </p>
@@ -132,6 +141,7 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/registrujStudenta.js"></script>
 
 </body>
 

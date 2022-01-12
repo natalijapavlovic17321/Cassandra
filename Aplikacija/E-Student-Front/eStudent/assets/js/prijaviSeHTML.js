@@ -51,10 +51,8 @@ if (
     );
   });
 } else if (sessionStorage.getItem("role") == "Student") {
-  alert("Vec ste prijavljeni");
   location.href = "student.html";
 } else if (sessionStorage.getItem("role") == "Profesor") {
-  alert("Vec ste prijavljeni");
   location.href = "profesor.html";
 }
   else if (sessionStorage.getItem("role") == "Administrator") {

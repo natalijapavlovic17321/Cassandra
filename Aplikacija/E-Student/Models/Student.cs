@@ -10,5 +10,6 @@ namespace E_Student.Models
         public String? Prezime { get; set; }
         public String? Semestar { get; set; }
         public String? Smer { get; set; }
+        public String? Dugovanje { get; set; }
     }
 }

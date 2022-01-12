@@ -1,58 +1,52 @@
 
 export class obavestenje{
-    constructor(
-        ID,
-        profesor,
-        tekst, 
-        ispit, 
-        datumObjave
+    constructor(datumObjave,emailProfesora,nazivPredmeta,tekst)
+    {
+        this.datumObjave=datumObjave;
+        this.emailProfesora=emailProfesora;
+        this.nazivPredmeta=nazivPredmeta;
+        this.tekst=tekst;
+    }
+    crtajObavestenje(host)
+    {
 
-    ){
-        this.kontObavestenje=null;
-        this.ID=ID;
-        this.profesor=profesor;
-        this.tekst=tekst;
-        this.ispit=ispit;
-        tjos.datumObjave=datumObjave;
-    }
-    dodajObavestenje(
-        ID,
-        profesor,
-        tekst, 
-        ispit, 
-        datumObjave
-    ){
-        this.ID=ID;
-        this.profesor=profesor;
-        this.tekst=tekst;
-        this.ispit=ispit;
-        tjos.datumObjave=datumObjave;
-    }
-    crtajObavestenje(host){
-        if (!host) 
-            throw new Error("Greska u hostu");
-        
         var pom= document.createElement("div");
-        pom.classList.add("col-md-6 col-lg-6");
+        pom.classList.add("col-md-6");
+        pom.classList.add("col-lg-6");
         pom.classList.add("feature-block");
-        host.appendChild(pom);
-
-        var naziv =document.createElement("h4");
-        naziv.innerHTML=this.naziv;
-        pom.appendChild(naziv);
-
+        
+        
         var et = document.createElement("label");
         et.innerHTML="@"
         et.classList.add("autor");
+        et.classList.add("obavestenja");
         var nazivProfesora = document.createElement("label");
         nazivProfesora.classList.add("comment-author");
         nazivProfesora.classList.add("autor");
-        nazivProfesora.innerHTML=this.profesor;
-        glavniDiv.appendChild(et);
-        glavniDiv.appendChild(nazivProfesora);
+        nazivProfesora.classList.add("obavestenja");
+        nazivProfesora.innerHTML=this.emailProfesora;
+        
+        //this.getObavestenjaStudent();
+        var naziv =document.createElement("h3");
+        naziv.innerHTML=this.nazivPredmeta;
+        naziv.classList.add("obavestenja");
+        naziv.classList.add("razmak");
+        
         pom.appendChild(et);
         pom.appendChild(nazivProfesora);
+        pom.appendChild(naziv);
+
+        //var glavniDiv= document.createElement("div");
+        
+        //glavniDiv.appendChild(et);
+        //glavniDiv.appendChild(nazivProfesora);
         
 
-    }
+        var txt=document.createElement("h4");
+        txt.innerHTML=this.tekst;
+        pom.appendChild(txt);
+        pom.classList.add("razmakgore");
+        host.appendChild(pom);
+        
+    }   
 }

@@ -103,6 +103,37 @@ public class StudentController : ControllerBase
             return BadRequest(ex.ToString());
         }
     }
+    [HttpGet]
+    [Route("getProfPredmeti/{smer}/{semestar}")]
+    public IActionResult getPredmeti(string smer, string semestar)
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            List<Predmet> predmeti = mapper.Fetch<Predmet>("WHERE smer=? AND semestar<=? ALLOW FILTERING", smer, semestar).ToList(); // svi predmeti koje je slusao student
+            List<PredajePredmet> predajePredmet = new List<PredajePredmet>();
+            foreach (var predmet in predmeti)
+            {
+                predajePredmet.AddRange(mapper.Fetch<PredajePredmet>("WHERE sifra_predmeta=? ALLOW FILTERING", predmet.Sifra_Predmeta).ToList());
+            }
+
+            return new JsonResult(predajePredmet);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+
+
+
+    }
     [HttpPut]
     [Route("updateStudent/{email}/{newSemestar}")]
     public IActionResult UpdateStudent(string email, string newSemestar)

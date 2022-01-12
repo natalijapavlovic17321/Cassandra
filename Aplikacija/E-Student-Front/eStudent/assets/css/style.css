@@ -1500,3 +1500,16 @@ table {
   text-align: center;
   padding: 20px;
 }
+.obavestenja
+{
+    display:inline;
+}
+.razmak
+{
+    margin-left: 1rem;
+}
+.razmakgore
+{
+  margin-top: 30px;
+
+}

@@ -76,8 +76,19 @@ public class StudentController : ControllerBase
         Cassandra.ISession localSession = cluster.Connect("test");
         //var localSession = SessionManager.GetSession();
         IMapper mapper = new Mapper(localSession);
-
-        List<Student> studenti = mapper.Fetch<Student>().ToList();
+        Student provera = new Student();       
+        List<Student> studenti = new List<Student>();
+        var student = localSession.Execute("SELECT * FROM student");         
+        foreach (var i in student)
+        {
+            provera.Odobren = i.GetValue<bool>("odobren");
+            provera.Email = i.GetValue<String>("email");
+            if (provera.Odobren == false)
+            {
+                List<Student> upis = mapper.Fetch<Student>("WHERE email=? ALLOW FILTERING", provera.Email).ToList();
+                studenti.Add(upis[0]);                           
+            }
+        }       
         cluster.Shutdown();
 
         return studenti;

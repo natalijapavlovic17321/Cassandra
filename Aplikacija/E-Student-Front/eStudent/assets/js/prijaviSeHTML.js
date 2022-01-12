@@ -26,9 +26,12 @@ function Login(usern, pass) {
 
         if (data.role == "Student") {
           location.href = "student.html";
-        } else {
-          data.role == "Profesor";
+        } else if (data.role == "Profesor"){        
           location.href = "profesor.html";
+        }
+        else {
+          data.role == "Administrator";
+          location.href = "administrator.html";
         }
       }
     })
@@ -53,4 +56,8 @@ if (
 } else if (sessionStorage.getItem("role") == "Profesor") {
   alert("Vec ste prijavljeni");
   location.href = "profesor.html";
+}
+  else if (sessionStorage.getItem("role") == "Administrator") {
+  alert("Vec ste prijavljeni");
+  location.href = "administrator.html";
 }

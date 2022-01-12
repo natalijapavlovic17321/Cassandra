@@ -21,12 +21,20 @@ else
         dO.addEventListener("click",dodajOcenu); 
         var d5 = document.getElementById("btPrikaziZabranu");
         d5.addEventListener("click",prikaziZabranu);
+        var odjaviSeBtn = document.getElementById("btnOdjaviSe");
+        odjaviSeBtn.addEventListener("click",function(){
+          console.log("odjavi se");
+        sessionStorage.clear();
+        location.href ="index.html"
+        });
     }
     else
     {
         p.setEmail(sessionStorage.getItem("email_profesor")); 
         var d = document.getElementById("radnjeProfesora");
         d.hidden=true;
+        var odjaviSeBtn = document.getElementById("btnOdjaviSe");
+        odjaviSeBtn.hidden=true;
     }
     p.getProfesor();
     var d4 = document.getElementById('btnPrikaziPredmete');

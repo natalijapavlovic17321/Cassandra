@@ -36,7 +36,8 @@ public class MyMappings : Cassandra.Mapping.Mappings
         .Column(x => x.Odobren)
         .Column(x => x.Prezime)
         .Column(x => x.Semestar)
-        .Column(x => x.Smer);
+        .Column(x => x.Smer)
+        .Column(x => x.Dugovanje);
 
 
         For<Predmet>().TableName("predmet").PartitionKey(x => x.Sifra_Predmeta)

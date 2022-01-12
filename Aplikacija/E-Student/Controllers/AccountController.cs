@@ -96,7 +96,8 @@ public class AccountController : ControllerBase
                 Odobren = false,
                 Prezime = model.Prezime,
                 Semestar = model.Semestar,
-                Smer = model.Smer
+                Smer = model.Smer,
+                Dugovanje = "0"
             };
             var salt = GenerateSalt(70);
             var hashPass = HashPassword(model.Password!, salt, 10101, 70);

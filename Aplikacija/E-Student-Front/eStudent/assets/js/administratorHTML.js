@@ -16,12 +16,41 @@ else
         location.href ="index.html"
     });
 
-var d4 = document.getElementById('btnPrikaziStudente');
-d4.addEventListener("click", preuzmiStudente); 
+var d1 = document.getElementById('btnPrikaziStudente');
+d1.addEventListener("click", preuzmiStudente); 
 
+var d2 = document.getElementById('btnDodajRok');
+d2.addEventListener("click", dodajRok); 
+
+var d3 = document.getElementById('btnDodajSalu');
+d3.addEventListener("click", dodajSalu); 
+
+var d4 = document.getElementById('btnDodajSatnicu');
+d4.addEventListener("click", dodajSatnicu); 
 
 }
 function preuzmiStudente()
 {
     p.PreuzmiStudente();
+}
+
+function dodajRok()
+{
+    var d5=document.getElementById("crtajDnjeRoka");
+    d5.innerHTML="";
+    p.crtajDodavanjeRoka();
+}
+
+function dodajSalu()
+{   
+    var d5=document.getElementById("crtanjeSale");
+    d5.innerHTML="";
+    p.crtajDodavanjeSale();   
+}
+
+function dodajSatnicu()
+{   
+    var d5=document.getElementById("crtanjeSatnice");
+    d5.innerHTML="";
+    p.crtajDodavanjeSatnice(); 
 }

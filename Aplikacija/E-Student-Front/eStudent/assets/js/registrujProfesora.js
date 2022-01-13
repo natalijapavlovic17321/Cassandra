@@ -32,8 +32,7 @@ function Register(ime,prezime,email,password,passwordConf,brTel,kanc){
     });
   }
 
-  if (sessionStorage.getItem("token") == null ||
-      sessionStorage.getItem("token") == "") {
+  if (sessionStorage.getItem("role") == "Administrator") {
       var d = document.getElementById("registrujSe");
       d.addEventListener("click", function () {
           Register(

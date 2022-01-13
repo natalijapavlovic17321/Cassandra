@@ -243,7 +243,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-    [Authorize(Roles = "Profesor")]
+    //[Authorize(Roles = "Profesor")]
     [HttpPost]
     [Route("addSatnica")]
     public IActionResult AddSatnica([FromBody] Satnica satnica)

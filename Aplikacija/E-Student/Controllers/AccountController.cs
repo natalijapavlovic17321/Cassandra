@@ -138,7 +138,7 @@ public class AccountController : ControllerBase
             return BadRequest();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpPost]
     [AllowAnonymous]
     [Route("registerProfesor")]

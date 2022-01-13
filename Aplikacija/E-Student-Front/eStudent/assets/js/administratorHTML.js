@@ -28,10 +28,61 @@ d3.addEventListener("click", dodajSalu);
 var d4 = document.getElementById('btnDodajSatnicu');
 d4.addEventListener("click", dodajSatnicu); 
 
+var d5 = document.getElementById('btnDodajPredmet');
+d5.addEventListener("click", dodajPredmet);
+
+var d6 = document.getElementById('btnPrikaziOdobreneStudente');
+d6.addEventListener("click", preuzmiOdobreneStudente); 
+
+var d7 = document.getElementById('btnPrikaziPredmete');
+d7.addEventListener("click", preuzmiPredmete);
+
+var d8 = document.getElementById('btnPrikaziRokove');
+d8.addEventListener("click", preuzmiRokove); 
+
+var d9 = document.getElementById('btnPrikaziSale');
+d9.addEventListener("click", preuzmiSale);
+
+var d10 = document.getElementById('btnPrikaziSatnice');
+d10.addEventListener("click", preuzmiSatnice);
+
+var d11 = document.getElementById('btnPrikaziProfesore');
+d11.addEventListener("click", preuzmiProfesore);
+
 }
+function preuzmiProfesore()
+{
+    p.PreuzmiProfesore();
+}
+
+function preuzmiSatnice()
+{
+    p.PreuzmiSatnice();
+}
+
+function preuzmiSale()
+{
+    p.PreuzmiSale();
+}
+
+function preuzmiRokove()
+{
+    p.PreuzmiRokove();
+}
+
 function preuzmiStudente()
 {
     p.PreuzmiStudente();
+}
+
+function preuzmiOdobreneStudente()
+{
+    p.PreuzmiOdobreneStudente();
+}
+
+function preuzmiPredmete()
+{
+    p.PreuzmiPredmete();
 }
 
 function dodajRok()
@@ -53,4 +104,11 @@ function dodajSatnicu()
     var d5=document.getElementById("crtanjeSatnice");
     d5.innerHTML="";
     p.crtajDodavanjeSatnice(); 
+}
+
+function dodajPredmet()
+{
+    var d5=document.getElementById("crtanjePredmeta");
+    d5.innerHTML="";
+    p.crtajDodavanjePredmeta(); 
 }

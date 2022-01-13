@@ -2,7 +2,7 @@ import {polozeniIspiti} from "./polozeniIspiti.js"
 import { zabranjeniIspiti } from "./zabranjeniIspit.js";
 
 export class student{
-    constructor(id, indeks,ime,prezime,email,godina,semestar,smer){
+    constructor(id, indeks,ime,prezime,email,godina,semestar,smer,dugovanje){
         this.kontejner=null;
        // this.id = id;
         this.ime = ime;
@@ -16,6 +16,7 @@ export class student{
         this.smer=smer
         this.prosecnaOcena=0;
         this.espb=0;
+        this.dugovanje = dugovanje;
         //vrtn ce da treba i prijavljeni ispiti 
         // mozda i zabrane
         // mada nzm dal ce one preko konstruktora da ti se psoledjuju 

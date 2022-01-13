@@ -11,6 +11,7 @@ namespace E_Student.Controllers;
 
 public class MatejaController : ControllerBase
 {
+    [Authorize(Roles = "Administrator")]
     [HttpPut]
     [Route("updateStudent/{email}/{smer}")]
     public IActionResult UpdateStudentSmer(string email, string smer)
@@ -38,7 +39,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpPost]
     [Route("addRok")]
     public IActionResult AddRok([FromBody] Rok rok)
@@ -73,7 +74,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpDelete]
     [Route("deleteRok/{id}")]
     public IActionResult DeleteRok(string id)
@@ -84,7 +85,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM rok WHERE id='"+id+"'");        
+            var result=localSession.Execute("DELETE FROM rok WHERE id='"+id+"'");       
             return Ok();
         }
         catch (Exception exc)
@@ -96,7 +97,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]  
     [HttpPost]
     [Route("addPredmet")]
     public IActionResult AddPredmet([FromBody] Predmet predmet)
@@ -137,7 +138,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpPut]
     [Route("updatePredmet")]
     public IActionResult UpdatePredmet([FromBody] Predmet predmet)
@@ -161,7 +162,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]          
     [HttpDelete]
     [Route("deletePredmet/{sifra}")]
     public IActionResult DeleteZabrana(string sifra)
@@ -184,7 +185,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpPost]
     [Route("addSala")]
     public IActionResult AddSala([FromBody] Sala sala)
@@ -220,7 +221,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpDelete]
     [Route("deleteSala/{naziv}")]
     public IActionResult DeleteSala(string naziv)
@@ -243,7 +244,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-    //[Authorize(Roles = "Profesor")]
+    [Authorize(Roles = "Administrator")]
     [HttpPost]
     [Route("addSatnica")]
     public IActionResult AddSatnica([FromBody] Satnica satnica)
@@ -277,11 +278,6 @@ public class MatejaController : ControllerBase
             {
                 provera.Rok_id = p.GetValue<String>("rok_id");
             }
-         //   var proveraSale = localSession.Execute("SELECT naziv FROM sala WHERE naziv='" + satnica.Naziv_sale + "' ALLOW FILTERING");
-         //   foreach (var p in proveraSale)
-          //  {
-          //      provera.Naziv_sale = p.GetValue<String>("naziv");
-         //   }
             var proveraSifrePredmeta = localSession.Execute("SELECT sifra_predmeta FROM predmet WHERE sifra_predmeta='" + satnica.Sifra_predmeta + "' ALLOW FILTERING");
             Satnica proveraSifre = new Satnica();
             foreach (var p in proveraSifrePredmeta)
@@ -311,7 +307,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpDelete]
     [Route("deleteSatnica/{id}")]
     public IActionResult DeleteSatnica(string id)
@@ -334,7 +330,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpPost]
     [Route("addProfesor")]
     public IActionResult AddProfesor([FromBody] Profesor profesor)
@@ -375,7 +371,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-
+    [Authorize(Roles = "Administrator")]
     [HttpPut]
     [Route("acceptStudent/{email}")]
     public IActionResult AcceptStudent(string email)
@@ -409,4 +405,257 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    [Route("getValidStudents")]
+    public List<Student> GetValidStudents()
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        Cassandra.ISession localSession = cluster.Connect("test");
+        IMapper mapper = new Mapper(localSession);
+        Student provera = new Student();       
+        List<Student> studenti = new List<Student>();
+        var student = localSession.Execute("SELECT * FROM student");         
+        foreach (var i in student)
+        {
+            provera.Odobren = i.GetValue<bool>("odobren");
+            provera.Email = i.GetValue<String>("email");
+            if (provera.Odobren == true)
+            {
+                List<Student> upis = mapper.Fetch<Student>("WHERE email=? ALLOW FILTERING", provera.Email).ToList();
+                studenti.Add(upis[0]);                           
+            }
+        }       
+        cluster.Shutdown();
+
+        return studenti;
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpPut]
+    [Route("StudentPay/{email}")]
+    public IActionResult StudentPay(string email)
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+        try
+        {
+            
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            Student student = mapper.Single<Student>("WHERE email=?", email);
+
+            if (student != null)
+            {
+                student.Dugovanje = "0";
+                mapper.Update<Student>(student);
+                return Ok();
+            }       
+            else
+            {
+                return BadRequest(400);
+            }
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    [Route("getSubjects")]
+    public IActionResult getSubjects()
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+
+            var result = mapper.Fetch<Predmet>("SELECT * from predmet");
+            return new JsonResult(result);
+        }  
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    [Route("getRokovi")]
+    public IActionResult getRokovi()
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            List<Rok> rokovi = new List<Rok>();
+            var result = localSession.Execute("SELECT * from rok ALLOW FILTERING");
+            foreach (var p in result)
+            {
+                Rok rok = new Rok();
+                rok.Id = p.GetValue<String>("id");
+                rok.Naziv = p.GetValue<String>("naziv");
+                rok.Pocetak_roka = p.GetValue<DateTime>("pocetak_roka");
+                rok.Pocetak_prijave = p.GetValue<DateTime>("pocetak_prijave");
+                rok.Kraj_prijave = p.GetValue<DateTime>("kraj_prijave");
+                rok.Zavrsetak_roka = p.GetValue<DateTime>("zavrsetak_roka");
+                rokovi.Add(rok);
+            }
+            return new JsonResult(rokovi);
+        }  
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    [Route("getSale")]
+    public IActionResult getSale()
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+
+            var result = mapper.Fetch<Sala>("SELECT * from sala");
+            return new JsonResult(result);
+        }  
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    [Route("getSatnice")]
+    public IActionResult getSatnice()
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            List<Satnica> satnice = new List<Satnica>();
+            var result = localSession.Execute("SELECT * from satnica ALLOW FILTERING");
+            foreach (var p in result)
+            {
+                Satnica satnica = new Satnica();
+                satnica.Id = p.GetValue<String>("id");
+                satnica.Rok_id = p.GetValue<String>("rok_id");
+                satnica.Naziv_sale = p.GetValue<String>("naziv_sale");
+                satnica.Datum = p.GetValue<DateTime>("datum");
+                satnica.Sifra_predmeta = p.GetValue<String>("sifra_predmeta");
+                satnica.Vreme = p.GetValue<String>("vreme");
+                satnice.Add(satnica);
+            }
+            return new JsonResult(satnice);
+        }  
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpDelete]
+    [Route("deleteAccProf/{email;}")]
+    public IActionResult deleteAccProf(string email)
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            var result=localSession.Execute("DELETE FROM login_register WHERE email='"+email+"'");
+            return Ok();
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+    [Authorize(Roles = "Administrator")]
+    [HttpDelete]
+    [Route("deleteProfesor/{email}")]
+    public IActionResult deleteProfesor(string email)
+    {
+        try
+        {
+            Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+
+            mapper.Delete<Profesor>(mapper.Single<Profesor>("WHERE email=?", email));
+            cluster.Shutdown();
+            deleteAccProf(email);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.ToString());
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    [Route("getProfesore")]
+    public IActionResult getProfesore()
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+
+            var result = mapper.Fetch<Profesor>("SELECT * from profesor");
+            return new JsonResult(result);
+        }  
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
 }

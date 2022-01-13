@@ -6,6 +6,7 @@ using Cassandra.Serialization;
 using E_Student.Converters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using E_Student.Controllers;
 
 namespace E_Student.Controllers;
 
@@ -68,7 +69,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet]
-    //[Authorize(Roles = "Student")]
+    [Authorize(Roles = "Administrator")]
     [Route("getStudents")]
     public List<Student> GetAllStudents()
     {
@@ -168,6 +169,31 @@ public class StudentController : ControllerBase
             return BadRequest(ex.ToString());
         }
     }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpDelete]
+    [Route("deleteAcc/{email;}")]
+    public IActionResult DeleteAcc(string email)
+    {
+        TypeSerializerDefinitions definitions = new TypeSerializerDefinitions();
+        definitions.Define(new DateCodec());
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").WithTypeSerializers(definitions).Build();
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            var result=localSession.Execute("DELETE FROM login_register WHERE email='"+email+"'");
+            return Ok();
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+    [Authorize(Roles = "Administrator")]
     [HttpDelete]
     [Route("deleteStudent/{email}")]
     public IActionResult DeleteStudent(string email)
@@ -181,6 +207,7 @@ public class StudentController : ControllerBase
 
             mapper.Delete<Student>(mapper.Single<Student>("WHERE email=?", email));
             cluster.Shutdown();
+            DeleteAcc(email);
             return Ok();
         }
         catch (Exception ex)

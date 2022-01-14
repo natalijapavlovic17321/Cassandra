@@ -20,7 +20,7 @@ public class MatejaController : ControllerBase
 
         try
         {
-            
+
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
 
@@ -52,15 +52,15 @@ public class MatejaController : ControllerBase
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='rok' ALLOW FILTERING").First();
-            rok.Id=id.GetValue<String>("counting");
-            if(rok != null)
+            rok.Id = id.GetValue<String>("counting");
+            if (rok != null)
             {
                 mapper.Insert<Rok>(rok);
-                string noviID=(Int32.Parse(rok.Id)+1).ToString();
-                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='rok'");
+                string noviID = (Int32.Parse(rok.Id) + 1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='" + noviID + "' WHERE tabela='rok'");
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -85,7 +85,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM rok WHERE id='"+id+"'");       
+            var result = localSession.Execute("DELETE FROM rok WHERE id='" + id + "'");
             return Ok();
         }
         catch (Exception exc)
@@ -97,8 +97,8 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-    [Authorize(Roles = "Administrator")]  
     [HttpPost]
+    [Authorize(Roles = "Administrator")]
     [Route("addPredmet")]
     public IActionResult AddPredmet([FromBody] Predmet predmet)
     {
@@ -112,19 +112,19 @@ public class MatejaController : ControllerBase
             List<Predmet> result = mapper.Fetch<Predmet>("WHERE sifra_predmeta=? ALLOW FILTERING", predmet.Sifra_Predmeta).ToList();
             foreach (var p in result)
             {
-               provera.NazivPredmeta = p.NazivPredmeta;
+                provera.NazivPredmeta = p.NazivPredmeta;
             }
             List<Predmet> result2 = mapper.Fetch<Predmet>("WHERE naziv_predmeta=? ALLOW FILTERING", predmet.NazivPredmeta).ToList();
             foreach (var p in result2)
             {
-               provera.Sifra_Predmeta = p.Sifra_Predmeta;
+                provera.Sifra_Predmeta = p.Sifra_Predmeta;
             }
-            if(predmet != null && provera.NazivPredmeta == null && provera.Sifra_Predmeta == null)
+            if (predmet != null && provera.NazivPredmeta == null && provera.Sifra_Predmeta == null)
             {
-                mapper.Insert<Predmet>(predmet);         
+                mapper.Insert<Predmet>(predmet);
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -146,14 +146,14 @@ public class MatejaController : ControllerBase
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
 
         try
-        {        
+        {
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
 
             mapper.Update<Predmet>(predmet);
             return Ok();
         }
-         catch (Exception exc)
+        catch (Exception exc)
         {
             return BadRequest(exc.ToString());
         }
@@ -162,7 +162,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-    [Authorize(Roles = "Administrator")]          
+    [Authorize(Roles = "Administrator")]
     [HttpDelete]
     [Route("deletePredmet/{sifra}")]
     public IActionResult DeleteZabrana(string sifra)
@@ -173,7 +173,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM predmet WHERE sifra_predmeta='"+sifra+"'");
+            var result = localSession.Execute("DELETE FROM predmet WHERE sifra_predmeta='" + sifra + "'");
             return Ok();
         }
         catch (Exception exc)
@@ -200,14 +200,14 @@ public class MatejaController : ControllerBase
             List<Sala> result = mapper.Fetch<Sala>("WHERE naziv=? ALLOW FILTERING", sala.Naziv).ToList();
             foreach (var p in result)
             {
-               provera.Naziv = p.Naziv;
+                provera.Naziv = p.Naziv;
             }
-            if(sala != null && provera.Naziv == null)
+            if (sala != null && provera.Naziv == null)
             {
                 mapper.Insert<Sala>(sala);
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -232,7 +232,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM sala WHERE naziv='"+naziv+"'");
+            var result = localSession.Execute("DELETE FROM sala WHERE naziv='" + naziv + "'");
             return Ok();
         }
         catch (Exception exc)
@@ -273,7 +273,7 @@ public class MatejaController : ControllerBase
                     t = true;
                 }
             }
-            var result = localSession.Execute("SELECT rok_id FROM satnica WHERE rok_id='" + satnica.Rok_id + "' AND sifra_predmeta='" + satnica.Sifra_predmeta +"' ALLOW FILTERING");
+            var result = localSession.Execute("SELECT rok_id FROM satnica WHERE rok_id='" + satnica.Rok_id + "' AND sifra_predmeta='" + satnica.Sifra_predmeta + "' ALLOW FILTERING");
             foreach (var p in result)
             {
                 provera.Rok_id = p.GetValue<String>("rok_id");
@@ -284,16 +284,16 @@ public class MatejaController : ControllerBase
             {
                 proveraSifre.Sifra_predmeta = p.GetValue<String>("sifra_predmeta");
             }
-            satnica.Id=id.GetValue<String>("counting");
-            if(satnica != null && provera.Rok_id == null && t == true && proveraSifre.Sifra_predmeta != null)
+            satnica.Id = id.GetValue<String>("counting");
+            if (satnica != null && provera.Rok_id == null && t == true && proveraSifre.Sifra_predmeta != null)
             {
                 satnica.Naziv_sale = "tbd";
                 mapper.Insert<Satnica>(satnica);
-                string noviID=(Int32.Parse(satnica.Id)+1).ToString();
-                var inc = localSession.Execute("UPDATE counting_id SET counting='"+noviID+"' WHERE tabela='satnica'");
+                string noviID = (Int32.Parse(satnica.Id) + 1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='" + noviID + "' WHERE tabela='satnica'");
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -318,7 +318,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM satnica WHERE id='"+id+"'");
+            var result = localSession.Execute("DELETE FROM satnica WHERE id='" + id + "'");
             return Ok();
         }
         catch (Exception exc)
@@ -345,19 +345,19 @@ public class MatejaController : ControllerBase
             List<Profesor> result = mapper.Fetch<Profesor>("WHERE email=? ALLOW FILTERING", profesor.Email).ToList();
             foreach (var p in result)
             {
-                provera.Br_telefona = p.Br_telefona;           
+                provera.Br_telefona = p.Br_telefona;
             }
             List<Profesor> result2 = mapper.Fetch<Profesor>("WHERE br_telefona=? ALLOW FILTERING", profesor.Br_telefona).ToList();
             foreach (var p in result2)
             {
                 provera.Email = p.Email;
             }
-            if(profesor != null && provera.Br_telefona == null && provera.Email == null)
+            if (profesor != null && provera.Br_telefona == null && provera.Email == null)
             {
                 mapper.Insert<Profesor>(profesor);
                 return Ok();
             }
-            else 
+            else
             {
                 return BadRequest(400);
             }
@@ -380,7 +380,7 @@ public class MatejaController : ControllerBase
 
         try
         {
-            
+
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             Student student = mapper.Single<Student>("WHERE email=?", email);
@@ -390,7 +390,7 @@ public class MatejaController : ControllerBase
                 student.Odobren = true;
                 mapper.Update<Student>(student);
                 return Ok();
-            }       
+            }
             else
             {
                 return BadRequest(400);
@@ -414,9 +414,9 @@ public class MatejaController : ControllerBase
         Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
         Cassandra.ISession localSession = cluster.Connect("test");
         IMapper mapper = new Mapper(localSession);
-        Student provera = new Student();       
+        Student provera = new Student();
         List<Student> studenti = new List<Student>();
-        var student = localSession.Execute("SELECT * FROM student");         
+        var student = localSession.Execute("SELECT * FROM student");
         foreach (var i in student)
         {
             provera.Odobren = i.GetValue<bool>("odobren");
@@ -424,9 +424,9 @@ public class MatejaController : ControllerBase
             if (provera.Odobren == true)
             {
                 List<Student> upis = mapper.Fetch<Student>("WHERE email=? ALLOW FILTERING", provera.Email).ToList();
-                studenti.Add(upis[0]);                           
+                studenti.Add(upis[0]);
             }
-        }       
+        }
         cluster.Shutdown();
 
         return studenti;
@@ -441,7 +441,7 @@ public class MatejaController : ControllerBase
 
         try
         {
-            
+
             Cassandra.ISession localSession = cluster.Connect("test");
             IMapper mapper = new Mapper(localSession);
             Student student = mapper.Single<Student>("WHERE email=?", email);
@@ -451,7 +451,7 @@ public class MatejaController : ControllerBase
                 student.Dugovanje = "0";
                 mapper.Update<Student>(student);
                 return Ok();
-            }       
+            }
             else
             {
                 return BadRequest(400);
@@ -480,7 +480,7 @@ public class MatejaController : ControllerBase
 
             var result = mapper.Fetch<Predmet>("SELECT * from predmet");
             return new JsonResult(result);
-        }  
+        }
         catch (Exception exc)
         {
             return BadRequest(exc.ToString());
@@ -517,7 +517,7 @@ public class MatejaController : ControllerBase
                 rokovi.Add(rok);
             }
             return new JsonResult(rokovi);
-        }  
+        }
         catch (Exception exc)
         {
             return BadRequest(exc.ToString());
@@ -541,7 +541,7 @@ public class MatejaController : ControllerBase
 
             var result = mapper.Fetch<Sala>("SELECT * from sala");
             return new JsonResult(result);
-        }  
+        }
         catch (Exception exc)
         {
             return BadRequest(exc.ToString());
@@ -578,7 +578,7 @@ public class MatejaController : ControllerBase
                 satnice.Add(satnica);
             }
             return new JsonResult(satnice);
-        }  
+        }
         catch (Exception exc)
         {
             return BadRequest(exc.ToString());
@@ -600,7 +600,7 @@ public class MatejaController : ControllerBase
         try
         {
             Cassandra.ISession localSession = cluster.Connect("test");
-            var result=localSession.Execute("DELETE FROM login_register WHERE email='"+email+"'");
+            var result = localSession.Execute("DELETE FROM login_register WHERE email='" + email + "'");
             return Ok();
         }
         catch (Exception exc)
@@ -647,7 +647,7 @@ public class MatejaController : ControllerBase
 
             var result = mapper.Fetch<Profesor>("SELECT * from profesor");
             return new JsonResult(result);
-        }  
+        }
         catch (Exception exc)
         {
             return BadRequest(exc.ToString());

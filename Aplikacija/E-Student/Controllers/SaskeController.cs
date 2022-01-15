@@ -266,6 +266,8 @@ public class SaskeController : ControllerBase
 
 
             }
+            returnValue.Distinct();
+
             return new JsonResult(returnValue);
         }
         catch (Exception exc)
@@ -322,6 +324,7 @@ public class SaskeController : ControllerBase
 
 
             }
+            returnValue.Distinct();
             return new JsonResult(returnValue);
         }
         catch (Exception exc)

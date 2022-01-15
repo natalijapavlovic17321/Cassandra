@@ -233,9 +233,7 @@ public class SaskeController : ControllerBase
             foreach (var predmet in predmeti)
 
             {
-
                 profesori.AddRange(mapper.Fetch<PredajePredmet>("WHERE sifra_predmeta=? ALLOW FILTERING", predmet.Sifra_Predmeta).ToList());
-
             }
 
             List<Obavestenje> obavestenjaRet = new List<Obavestenje>();
@@ -246,9 +244,10 @@ public class SaskeController : ControllerBase
                     if (j.Email_profesor == pr.Email_profesora)
                         obavestenjaRet.Add(j);
                 }
-
             }
             var returnValue = new List<object>();
+            obavestenjaRet.Distinct();
+            predmeti.Distinct();
             foreach (var obav in obavestenjaRet)
             {
                 foreach (var predm in predmeti)
@@ -261,14 +260,11 @@ public class SaskeController : ControllerBase
                         string obavestenje = obav.Tekst!;
                         returnValue.Add(new { datum, emailProf, predmet, obavestenje });
                     }
-
                 }
-
-
             }
             returnValue.Distinct();
 
-            return new JsonResult(returnValue);
+            return new JsonResult(returnValue.Distinct());
         }
         catch (Exception exc)
         {
@@ -319,10 +315,7 @@ public class SaskeController : ControllerBase
                         string obavestenje = obav.Tekst!;
                         returnValue.Add(new { datum, emailProf, predmet, obavestenje });
                     }
-
                 }
-
-
             }
             returnValue.Distinct();
             return new JsonResult(returnValue);

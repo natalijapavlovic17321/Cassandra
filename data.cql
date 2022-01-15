@@ -1,9 +1,6 @@
 create keyspace "test"
     with replication = {'class' : 'SimpleStrategy', 'replication_factor' : 1}
     and durable_writes = false;
-
-
-
 use "test";
 
 
@@ -183,6 +180,7 @@ insert into "login_register"("email","password_hash","role","salt") values('alek
 insert into "login_register"("email","password_hash","role","salt") values('saske@elfak.rs','JGPd/98bmnMlSTjrNRwJ9bGvltel1IB2l+dDsh8zZoqXZkt8DumuHI3BTUoRp/6Sm+xm0K8XAdbjiAUUDwxw7cMu8BMnvQ==','Student','O8LFeF1BteIFUs+MihPDOe7t8rQne/a+1wlVgKibGOFw7NhF3JTqIaficJifoA9BSGZ8/6qj7FSaeJj/J5zUk8eQK20JBQ==');
 insert into "login_register"("email","password_hash","role","salt") values('nebojsa.raicevic@elfak.rs','4sMum/C3ATxL1YcNJOTn4WnHg+uI/TX2ArAjGdr5BS/Wd+61BgztXqvLXHUPYKmy+Uemn2rHs3HBcEp00V1Gj+kdp7rZ5A==','Profesor','EEEaRbnvYTfx6eLY4b8vZwGLCc8Okez9LCafaYHQd4hhx1eMtBDYphIq1jEhmj7mH4BhNpao1Gn0wUajxtWhbOOFPfyuyQ==');
 insert into "login_register"("email","password_hash","role","salt") values('zovao@elfak.rs','vKL2erWt3OSRBR2jcfSwZFK16BX00dzV9qPtx4uNcOapRevsWqzqIT++qIh6wYQVrs62U7RfCXsKF5PNSr2lk+gW4lwNTg==','Student','cMKHEJuYax7LYR9pH1J8jOVpGjWDUGVpNbmg7vp82PL3u61/wyjTSM2zZ/mduE8/oNXvovWgyNBrGUZyS33dDWaTDJRQDQ==');
+insert into "login_register"("email","password_hash","role","salt") values('admin@elfak.rs','jNF9vBfPSI0LwO9ShaftHjShJMsEv55gYEA9D3hF+xvgisA9oo28m1CEmXyCx9Yyuznnx72F55WrqACB1BLJ2ZhDgsnWvw==','Admin','k6Nq8uolgKF4FMzT/VXU/UEJcbLCqgb6jEuNLkgCJ3+GVYQurTPK4lS/7sLd/rI8Tzzw2dRYex6WQIob4WoXo2dvWEBfrg==');
 insert into "login_register"("email","password_hash","role","salt") values('jovic@elfak.rs','cvdXJtCATxdXv4upT9iGY3sqio3uPYMZYrxBn/tXGcdSCojd/13bz7sCtZqc4tlf0FtXHs+wO4swjQDOLc8Y0V2jgvxxgQ==','Student','c/6r4I7Jcf6Jn/EjLOVz5nAm7kDOvUIE8sfr2MXxb3P+XjAJ8iR8nDlipjvwPpXqat5Lz0+n/6PJ8UBH2lhxgXrxvH1qTA==');
 insert into "login_register"("email","password_hash","role","salt") values('culinjo@elfak.rs','axYBuHpNeijO6/SfzbO7pixqGwDHbewWI4HXMVHHohPtYwwxzASo7i8t4gjjFJNDUjP3Y/PjZDsmwCLBVQ+ScbyKMJZLNw==','Student','ZlG+ZbHpLOnqIqotnbuBPxWyORFYeTSeU7Xu3VDXZn4g04xXASWL3vB4P28I/xj/CWQvol8MNQnOYho7ArB2n7tpoN7/5Q==');
 
@@ -239,6 +237,7 @@ insert into "profesor"("email","br_telefona","ime","kancelarija","prezime") valu
 
 // rok table data.
 insert into "rok"("id","pocetak_roka","kraj_prijave","naziv","pocetak_prijave","zavrsetak_roka") values('0','2021-07-21','2021-07-20','JUN2021','2021-07-10','2021-07-30');
+insert into "rok"("id","pocetak_roka","kraj_prijave","naziv","pocetak_prijave","zavrsetak_roka") values('2','2022-01-14','2022-01-10','DECEMBAR021','2021-12-12','2022-02-27');
 insert into "rok"("id","pocetak_roka","kraj_prijave","naziv","pocetak_prijave","zavrsetak_roka") values('1','2022-02-16','2022-02-15','JANUAR2022','2022-01-14','2022-02-27');
 
 
@@ -254,7 +253,10 @@ insert into "sala"("naziv","kapacitet","sprat") values('A1',100,1);
 // satnica table data.
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('6','0','2021-07-27','535','A777B','14:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('16','1','2022-02-16','A2','A888B','13:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('26','2','2022-01-27','tbd','A999B','09:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('19','2','2022-01-24','tbd','A111B','13:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('13','1','2022-02-23','A1','A555B','09:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('21','2','2022-01-25','tbd','A444B','13:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('7','0','2021-07-26','A1','A888B','14:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('17','1','2022-02-17','A3','A999B','09:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('9','1','2022-02-17','A1','A111B','09:00');
@@ -263,11 +265,17 @@ insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('4','0','2021-07-25','A4','A555B','13:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('3','0','2021-07-22','A1','A444B','14:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('5','0','2021-07-26','525','A666B','14:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('25','2','2022-01-27','tbd','A888B','13:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('18','2','2022-01-23','tbd','A222B','13:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('0','0','2021-07-22','A1','A111B','14:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('14','1','2022-02-25','525','A666B','14:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('8','0','2021-07-27','A2','A999B','13:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('20','2','2022-01-23','tbd','A333B','09:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('2','0','2021-07-22','A3','A333B','14:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('22','2','2022-01-25','tbd','A555B','09:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('12','1','2022-02-22','A4','A444B','14:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('23','2','2022-01-26','tbd','A666B','09:00');
+insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('24','2','2022-01-23','tbd','A777B','13:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('11','1','2022-02-17','A3','A333B','09:00');
 insert into "satnica"("id","rok_id","datum","naziv_sale","sifra_predmeta","vreme") values('1','0','2021-07-23','A2','A222B','13:00');
 
@@ -285,13 +293,14 @@ insert into "student"("email","dugovanje","godinaupisa","ime","indeks","odobren"
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('0','2022-01-30','culinjo@elfak.rs','prepisivao','A666B');
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('2','2022-01-11','mata@elfak.rs','psovanje profesora','A444B');
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('1','2021-10-10','nata@elfak.rs','varanje na ispitu','A333B');
+insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('3','2021-10-10','culinjo@elfak.rs','varanje na ispitu','A111B');
 
 
 // counting_id table data.
 insert into "counting_id"("tabela","counting") values('rok','17');
 insert into "counting_id"("tabela","counting") values('polozeni_ispiti','17');
 insert into "counting_id"("tabela","counting") values('predaje_predmet','17');
-insert into "counting_id"("tabela","counting") values('satnica','17');
+insert into "counting_id"("tabela","counting") values('satnica','27');
 insert into "counting_id"("tabela","counting") values('zabranjena_prijava','17');
 insert into "counting_id"("tabela","counting") values('obavestenje','17');
 insert into "counting_id"("tabela","counting") values('prijave_ispita','22');

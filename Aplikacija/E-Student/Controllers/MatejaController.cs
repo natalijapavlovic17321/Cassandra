@@ -138,7 +138,7 @@ public class MatejaController : ControllerBase
             cluster.Shutdown();
         }
     }
-    [Authorize(Roles = "Administrator")]
+   /* [Authorize(Roles = "Administrator")]
     [HttpPut]
     [Route("updatePredmet")]
     public IActionResult UpdatePredmet([FromBody] Predmet predmet)
@@ -161,7 +161,7 @@ public class MatejaController : ControllerBase
         {
             cluster.Shutdown();
         }
-    }
+    }*/
     [Authorize(Roles = "Administrator")]
     [HttpDelete]
     [Route("deletePredmet/{sifra}")]
@@ -647,6 +647,91 @@ public class MatejaController : ControllerBase
 
             var result = mapper.Fetch<Profesor>("SELECT * from profesor");
             return new JsonResult(result);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpPost]
+    [Route("AddPredajePredmet")]
+    public IActionResult AddPredajePredmet([FromBody] PredajePredmet predaje)
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            var id = localSession.Execute("SELECT counting FROM counting_id WHERE tabela='predaje_predmet' ALLOW FILTERING").First();
+            predaje.Id = id.GetValue<String>("counting");
+            List<PredajePredmet> provera = mapper.Fetch<PredajePredmet>("SELECT * FROM predaje_predmet WHERE email_profesora=? AND sifra_predmeta=? ALLOW FILTERING", predaje.Email_profesora, predaje.Sifra_predmeta).ToList();
+            var provera2 = mapper.Fetch<Predmet>("SELECT * FROM predmet WHERE sifra_predmeta=?", predaje.Sifra_predmeta).ToList();
+            if (predaje != null && provera.Count == 0 && provera2.Count != 0)
+            {
+                mapper.Insert<PredajePredmet>(predaje);
+                string noviID = (Int32.Parse(predaje.Id) + 1).ToString();
+                var inc = localSession.Execute("UPDATE counting_id SET counting='" + noviID + "' WHERE tabela='predaje_predmet'");
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(400);
+            }
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.ToString());
+        }
+        finally
+        {
+            cluster.Shutdown();
+        }
+    }
+
+    [HttpGet]
+    [Route("VratiPredmeteKojeNePredaje/{email}/{predmet}")]
+    public IActionResult VratiPredmeteKojeNePredaje(string email)
+    {
+        Cluster cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+
+        try
+        {
+            Cassandra.ISession localSession = cluster.Connect("test");
+            IMapper mapper = new Mapper(localSession);
+            List<PredajePredmet> predaje = mapper.Fetch<PredajePredmet>("SELECT sifra_predmeta FROM predaje_predmet WHERE email_profesora='" + email + "' ALLOW FILTERING").ToList();
+            List<Predmet> predmet = mapper.Fetch<Predmet>("SELECT * FROM predmet").ToList();
+            List<Predmet> result = new List<Predmet>();
+            bool t = false;
+            foreach (var p in predmet)
+            {
+                for (int i = 0; i < predaje.Count; i++)
+                {
+                    if (p.Sifra_Predmeta == predaje[i].Sifra_predmeta)
+                        {
+                            t = true;
+                        }
+                }
+                if (t == false)
+                {
+                    result.Add(p);
+                }
+                t = false;
+            }       
+            if (email != null)
+            {
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest(400);
+            }
         }
         catch (Exception exc)
         {

@@ -70,8 +70,8 @@ export class admin {
   }
 
   crtajStudente(host) {
-    //var b = document.getElementById("btnPrikaziStudente");
-    var b = document.getElementById("crtaj");
+    var b = document.getElementById("btnPrikaziStudente");
+    //var b = document.getElementById("crtaj");
     b.hidden = true;
     var table1 = document.createElement("table");
     table1.id = "neodobreniStudenti";
@@ -136,8 +136,8 @@ export class admin {
   }
 
   crtajOdobreneStudente(host) {
-    //var b = document.getElementById("btnPrikaziOdobreneStudente");
-    var b = document.getElementById("crtaj");
+    var b = document.getElementById("btnPrikaziOdobreneStudente");
+    //var b = document.getElementById("crtaj");
     b.hidden = true;
     var table1 = document.createElement("table");
     table1.id = "odobreniStudenti";
@@ -155,6 +155,7 @@ export class admin {
       "Smer",
       " ",
       " ",
+      " "
     ];
     row1 = table1.insertRow();
     for (let i = 0; i < staticInfo.length; i++) {
@@ -195,7 +196,7 @@ export class admin {
 
       cell1 = row1.insertCell();
       var btn = document.createElement("button");
-      btn.innerHTML = "Obrisi dugovanje";
+      btn.innerHTML = "Obrisi dugovanja";
       btn.onclick = (ev) => {
         this.ObrisiDugovanje(i.email);
       };
@@ -209,9 +210,47 @@ export class admin {
       };
       cell1.appendChild(btn1);
 
+      cell1 = row1.insertCell();
+      var btn2 = document.createElement("button");
+      btn2.innerHTML = "Izmeni smer";
+      var l = document.createElement("input");
+      l.id = i.indeks;
+      cell1.appendChild(l);
+      btn2.onclick = (ev) => {      
+        this.IzmeniSmer(i.email, i.indeks);
+      };
+      cell1.appendChild(btn2);
+
       j++;
     });
     host.appendChild(table1);
+  }
+
+  IzmeniSmer(email, indeks)
+  {
+    var smer = document.getElementById(indeks).value;
+    if (smer != "")
+    {
+      fetch("https://localhost:7078/updateStudent/" + email + "/" + smer, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
+        body: JSON.stringify({}),
+      })
+        .then((p) => {
+          if (p.ok) {
+            alert("Smer uspesno izmenjen");
+            location.href = "administrator.html";
+          } else {
+            alert("Greska kod izmene");
+          }
+        })
+        .catch((p) => {
+          alert("Greška sa konekcijom.");
+        });
+      } else alert("Unesite naziv smera");
   }
 
   ObrisiStudenta(email) {
@@ -388,8 +427,8 @@ export class admin {
   }
 
   crtajRokove(host) {
-    //var b = document.getElementById("btnPrikaziRokove");
-    var b = document.getElementById("crtaj");
+    var b = document.getElementById("btnPrikaziRokove");
+    //var b = document.getElementById("crtaj");
     b.hidden = true;
     var table1 = document.createElement("table");
     table1.id = "rokovi";
@@ -462,11 +501,11 @@ export class admin {
           data.forEach((element) => {
             var p1 = new rok(
               element.id,
-              element.pocetak_roka,
-              element.kraj_prijave,
+              element.pocetak_roka.slice(0, 10),
+              element.kraj_prijave.slice(0, 10),
               element.naziv,
-              element.pocetak_prijave,
-              element.zavrsetak_roka
+              element.pocetak_prijave.slice(0, 10),
+              element.zavrsetak_roka.slice(0, 10)
             );
             this.dodajRok(p1);
           });
@@ -712,6 +751,10 @@ export class admin {
     inp1.style = "width:700px";
     d5.appendChild(inp1);
 
+
+    var l2 = document.createElement("label");
+    l2.innerHTML = "Sifra predmeta";
+    d5.appendChild(l2);
     var sel = document.createElement("select");
     sel.style = "width:200px";
     sel.id = "selectPredmet";
@@ -744,17 +787,17 @@ export class admin {
       this.DodajSatnicu();
     });
 
-    sel.addEventListener("change", (e) => {
-      this.PreuzmiPredmeteZaSatnicu(
-        document.getElementById("selectPredmet").value
-      );
-    });
-    this.PreuzmiPredmeteZaSatnicu(
-      document.getElementById("selectPredmet").value
-    );
+    //sel.addEventListener("change", (e) => {
+    //  this.PreuzmiPredmeteZaSatnicu(
+     //   document.getElementById("selectPredmet").value
+     // );
+   // });
+   // this.PreuzmiPredmeteZaSatnicu(
+   //   document.getElementById("selectPredmet").value
+    //);
   }
 
-  PreuzmiPredmeteZaSatnicu() {
+  PreuzmiPredmeteZaSatnicu(p) {
     this.ispiti.length = 0;
     fetch("https://localhost:7078/getSubjects", {
       method: "GET",
@@ -778,7 +821,7 @@ export class admin {
             );
             this.dodajIspit(p1);
           });
-          this.crtajPredmete(document.getElementById());
+          this.crtajDodavanjeSatnice(p);
         }
       })
       .catch((error) => console.error("Greska", error));
@@ -855,7 +898,7 @@ export class admin {
             var p1 = new satnica(
               element.id,
               element.rok_id,
-              element.datum,
+              element.datum.slice(0, 10),
               element.naziv_sale,
               element.sifra_predmeta,
               element.vreme
@@ -1144,6 +1187,7 @@ export class admin {
       "Broj telefona",
       "Kancelarija",
       " ",
+      " "
     ];
     row1 = table1.insertRow();
     for (let i = 0; i < staticInfo.length; i++) {
@@ -1180,9 +1224,87 @@ export class admin {
       };
       cell1.appendChild(btn);
 
+      cell1 = row1.insertCell();
+      
+      var sel = document.createElement("input");
+      sel.style = "width:200px";
+      sel.id = i.brtel;
+      cell1.appendChild(sel);
+      
+      var btn1 = document.createElement("button");
+      btn1.innerHTML = "Dodaj predmet";
+      btn1.onclick = (ev) => {
+        this.DodajPredmetProfesoru(i.email, i.brtel);
+      };
+      cell1.appendChild(btn1);
+
       j++;
     });
     host.appendChild(table1);
+  }
+
+  DodajPredmetProfesoru(email, brtelefona)
+  {
+    var sifra = document.getElementById(brtelefona).value;
+    if (email != "")
+    {
+    fetch("https://localhost:7078/AddPredajePredmet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          id: "string",
+          sifra_predmeta: sifra,
+          email_profesora: email,
+        }),
+      })
+        .then((p) => {
+          if (p.ok) {
+            alert("Uspesno dodavanje predmeta");
+            location.href = "administrator.html";
+          } else {
+            alert("Greska kod dodavanja");
+          }
+        })
+        .catch((p) => {
+          alert("Greška sa konekcijom.");
+        });
+      }
+     else alert("Unesite sva polja");
+      }
+
+  VratiNazivePredmetaZaProfesore(email)
+  {
+    this.ispiti.length = 0;
+    fetch("https://localhost:7078/VratiPredmeteKojeNePredaje/" +email, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + sessionStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.title == "Unauthorized")
+          alert("Lose korisnicko ime ili sifra.");
+        else {
+          data.forEach((element) => {
+            var p1 = new predmet(
+              element.sifra_Predmeta,
+              element.espb,
+              element.nazivPredmeta,
+              element.semestar,
+              element.smer
+            );
+            this.dodajIspit(p1);
+          });
+          //this.PreuzmiProfesore();
+          //this.crtajPredmete(document.getElementById("crtajPredmete"));
+        }
+      })
+      .catch((error) => console.error("Greska", error));
   }
 
   ObrisiProfesora(email) {
@@ -1233,6 +1355,7 @@ export class admin {
             this.dodajProfesora(p1);
           });
           this.crtajProfesore(document.getElementById("crtajProfesore"));
+          
         }
       })
       .catch((error) => console.error("Greska", error));

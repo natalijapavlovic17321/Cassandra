@@ -53,6 +53,8 @@ d11.addEventListener("click", preuzmiProfesore);
 function preuzmiProfesore()
 {
     p.PreuzmiProfesore();
+    //var b = document.getElementById('id');
+    //p.VratiNazivePredmetaZaProfesore();
 }
 
 function preuzmiSatnice()
@@ -103,7 +105,8 @@ function dodajSatnicu()
 {   
     var d5=document.getElementById("crtanjeSatnice");
     d5.innerHTML="";
-    p.crtajDodavanjeSatnice(); 
+    p.PreuzmiPredmeteZaSatnicu();
+    //p.crtajDodavanjeSatnice(); 
 }
 
 function dodajPredmet()

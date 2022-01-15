@@ -7,7 +7,6 @@ public class MyMappings : Cassandra.Mapping.Mappings
     {
         For<PrijaveIspita>().TableName("prijave_ispita").PartitionKey(x => x.Id).ClusteringKey(x => x.Rok_id)
         .Column(x => x.Email_studenta)
-        .Column(x => x.Mesto)
         .Column(x => x.Naziv_sale)
         .Column(x => x.Sifra_predmeta);
 

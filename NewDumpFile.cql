@@ -7,16 +7,6 @@ create keyspace "test"
 use "test";
 
 
-CREATE TABLE counting_id (
-    tabela text,
-    counting text,
-    PRIMARY KEY (tabela)
-) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
- AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
- AND compression={'chunk_length_in_kb':'64', 'class':'org.apache.cassandra.io.compress.LZ4Compressor'}
- AND dclocal_read_repair_chance=0.1
- AND speculative_retry='99PERCENTILE';
-
 CREATE TABLE login_register (
     email text,
     password_hash text,
@@ -174,7 +164,15 @@ CREATE TABLE zabranjena_prijava (
  AND dclocal_read_repair_chance=0.1
  AND speculative_retry='99PERCENTILE';
 
-// counting_id table has no data.
+CREATE TABLE counting_id (
+    tabela text,
+    counting text,
+    PRIMARY KEY (tabela)
+) WITH caching={'keys':'ALL', 'rows_per_partition':'NONE'}
+ AND compaction={'class':'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold':'32', 'min_threshold':'4'}
+ AND compression={'chunk_length_in_kb':'64', 'class':'org.apache.cassandra.io.compress.LZ4Compressor'}
+ AND dclocal_read_repair_chance=0.1
+ AND speculative_retry='99PERCENTILE';
 
 // login_register table data.
 insert into "login_register"("email","password_hash","role","salt") values('mate@elfak.rs','XyRN4kj14OWJGFq6080N9frfJnC5uNJSo9OeWYr+xzGv8LMzrhST45E8D2NAtVXWCzuiThxyQCb2uBqNMptNzYHaziNn8w==','Student','1DMGB2JKf8vFmntQDJx3dNckpnDRzK+A+BqcxJd/Y9D5S4ZJ7jE9qmzPq1dz3U+4POq6OvM3fb0e8Un2lSEE9nQiyOA1Yg==');
@@ -226,7 +224,11 @@ insert into "predmet"("sifra_predmeta","espb","naziv_predmeta","semestar","smer"
 insert into "predmet"("sifra_predmeta","espb","naziv_predmeta","semestar","smer") values('A333B','5','Diskretna Matematika','3','RII');
 
 
-// prijave_ispita table has no data.
+// prijave_ispita table data.
+insert into "prijave_ispita"("id","rok_id","email_studenta","naziv_sale","sifra_predmeta") values('21','1','nata@elfak.rs',NULL,'A444B');
+insert into "prijave_ispita"("id","rok_id","email_studenta","naziv_sale","sifra_predmeta") values('18','1','culinjo@elfak.rs',NULL,'A111B');
+insert into "prijave_ispita"("id","rok_id","email_studenta","naziv_sale","sifra_predmeta") values('20','1','nata@elfak.rs',NULL,'A222B');
+
 
 // profesor table data.
 insert into "profesor"("email","br_telefona","ime","kancelarija","prezime") values('milos.bogdanovic@elfak.rs','0666666','Milos','L2','Bogdanovic');
@@ -283,5 +285,15 @@ insert into "student"("email","dugovanje","godinaupisa","ime","indeks","odobren"
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('0','2022-01-30','culinjo@elfak.rs','prepisivao','A666B');
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('2','2022-01-11','mata@elfak.rs','psovanje profesora','A444B');
 insert into "zabranjena_prijava"("id","datum_isteka","email_student","razlog","sifra_predmeta") values('1','2021-10-10','nata@elfak.rs','varanje na ispitu','A333B');
+
+
+// counting_id table data.
+insert into "counting_id"("tabela","counting") values('rok','17');
+insert into "counting_id"("tabela","counting") values('polozeni_ispiti','17');
+insert into "counting_id"("tabela","counting") values('predaje_predmet','17');
+insert into "counting_id"("tabela","counting") values('satnica','17');
+insert into "counting_id"("tabela","counting") values('zabranjena_prijava','17');
+insert into "counting_id"("tabela","counting") values('obavestenje','17');
+insert into "counting_id"("tabela","counting") values('prijave_ispita','22');
 
 

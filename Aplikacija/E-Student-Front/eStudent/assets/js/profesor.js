@@ -210,7 +210,8 @@ export class profesor {
     o.style = "width:200px";
     sel.appendChild(o);
     di.appendChild(sel);
-    this.zabrane.forEach((i) => {
+    var lista=this.getSifre();
+    lista.forEach((i) => {
       var o = document.createElement("option");
       o.value = i.sifra_predmeta;
       o.innerHTML = i.sifra_predmeta;
@@ -240,6 +241,20 @@ export class profesor {
       divZaCrtanje.innerHTML = "";
       this.crtajTabluZabrana(divZaCrtanje, false);
     });
+  }
+  getSifre(){
+      var lista=[];
+      var j=0;
+      this.zabrane.forEach(element => {
+        lista.forEach(l=>{
+          if(element.sifra_predmeta==l.sifra_predmeta)
+              j++;
+        });
+        if(j<1)
+          lista.push(element);
+        j=0;
+      });
+      return lista;
   }
   crtajTabluZabrana(host, t) {
     var predmet = document.getElementById("selectID").value;

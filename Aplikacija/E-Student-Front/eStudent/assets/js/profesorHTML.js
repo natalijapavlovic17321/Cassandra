@@ -10,7 +10,6 @@ else
     if(sessionStorage.getItem("role")=="Profesor")
     {
         p.setEmail(sessionStorage.getItem("username"));
-        //p.setEmail("prof@elfak.rs");
         var d1 = document.getElementById("btnDodajObavestenje");
         var d2 = document.getElementById("btnDodajZabranu");
         var d3 = document.getElementById("btnDodajSalu");

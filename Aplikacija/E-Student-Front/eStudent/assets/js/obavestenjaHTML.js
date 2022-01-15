@@ -12,12 +12,5 @@ else
          {
           o.crtajSvaObavestenja(r);
          }
-        
-
-    
-    
-   
-
-    
 }
  

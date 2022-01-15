@@ -99,7 +99,7 @@ export class student{
             cell.innerHTML=element.raz;
             cell=row.insertCell();
             p1.ocena=element.datumr;
-            cell.innerHTML=element.datumr;
+            cell.innerHTML=element.datumr.slice(0, 10);;
             
           });
           
